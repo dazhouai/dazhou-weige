@@ -73,7 +73,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
           {copy.titles.map((t, i) => (
             <div key={i} className="flex items-center gap-2">
               <input
-                className="flex-1 rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-2 text-sm"
+                className="sw-input flex-1"
                 value={t}
                 onChange={(e) => {
                   const titles = [...copy.titles];
@@ -98,7 +98,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
           </button>
         </div>
         <textarea
-          className="h-72 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3 text-sm leading-6"
+          className="sw-input h-72 w-full leading-6"
           value={copy.body}
           onChange={(e) => setCopy({ ...copy, body: e.target.value })}
         />
@@ -168,25 +168,25 @@ function PosterEditor({ poster, onChange }: { poster: Poster; onChange: (p: Post
       </button>
       {expanded && (
         <div className="space-y-2 border-t border-[var(--sw-line)] p-3">
-          <input className="w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.title} placeholder="标题" onChange={(e) => onChange({ ...poster, title: e.target.value })} />
+          <input className="sw-input w-full" value={poster.title} placeholder="标题" onChange={(e) => onChange({ ...poster, title: e.target.value })} />
           {(poster.kind === "cover" || poster.kind === "data" || poster.kind === "shift" || poster.kind === "workspace" || poster.kind === "principle" || poster.kind === "reflection") && (
-            <textarea className="h-24 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.lines.join("\n")} placeholder="每行一条内容" onChange={(e) => onChange({ ...poster, lines: e.target.value.split("\n") })} />
+            <textarea className="sw-input h-24 w-full" value={poster.lines.join("\n")} placeholder="每行一条内容" onChange={(e) => onChange({ ...poster, lines: e.target.value.split("\n") })} />
           )}
           {(poster.kind === "workflow") && (
-            <textarea className="h-24 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.steps || []).map((s) => s.text).join("\n")} placeholder="每行一步" onChange={(e) => onChange({ ...poster, steps: e.target.value.split("\n").filter(Boolean).map((text, i) => ({ num: String(i + 1), text })) })} />
+            <textarea className="sw-input h-24 w-full" value={(poster.steps || []).map((s) => s.text).join("\n")} placeholder="每行一步" onChange={(e) => onChange({ ...poster, steps: e.target.value.split("\n").filter(Boolean).map((text, i) => ({ num: String(i + 1), text })) })} />
           )}
           {(poster.kind === "division") && (
-            <textarea className="h-20 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.comparison || []).join("\n")} placeholder="第一行：没做…；第二行：做了…" onChange={(e) => onChange({ ...poster, comparison: e.target.value.split("\n").filter(Boolean) })} />
+            <textarea className="sw-input h-20 w-full" value={(poster.comparison || []).join("\n")} placeholder="第一行：没做…；第二行：做了…" onChange={(e) => onChange({ ...poster, comparison: e.target.value.split("\n").filter(Boolean) })} />
           )}
           {(poster.kind === "end") && (
             <>
-              <textarea className="h-20 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.fitItems || []).join("\n")} placeholder="适合谁（每行一条）" onChange={(e) => onChange({ ...poster, fitItems: e.target.value.split("\n").filter(Boolean) })} />
-              <input className="w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.notFitItem || ""} placeholder="不适合谁" onChange={(e) => onChange({ ...poster, notFitItem: e.target.value })} />
-              <textarea className="h-16 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.ctaItems || []).join("\n")} placeholder="CTA（每行一条）" onChange={(e) => onChange({ ...poster, ctaItems: e.target.value.split("\n").filter(Boolean) })} />
+              <textarea className="sw-input h-20 w-full" value={(poster.fitItems || []).join("\n")} placeholder="适合谁（每行一条）" onChange={(e) => onChange({ ...poster, fitItems: e.target.value.split("\n").filter(Boolean) })} />
+              <input className="sw-input w-full" value={poster.notFitItem || ""} placeholder="不适合谁" onChange={(e) => onChange({ ...poster, notFitItem: e.target.value })} />
+              <textarea className="sw-input h-16 w-full" value={(poster.ctaItems || []).join("\n")} placeholder="CTA（每行一条）" onChange={(e) => onChange({ ...poster, ctaItems: e.target.value.split("\n").filter(Boolean) })} />
             </>
           )}
           <div className="flex gap-2">
-            <input className="flex-1 rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-xs" value={poster.footer || ""} placeholder="页脚（默认 @账号）" onChange={(e) => onChange({ ...poster, footer: e.target.value })} />
+            <input className="sw-input flex-1" value={poster.footer || ""} placeholder="页脚（默认 @账号）" onChange={(e) => onChange({ ...poster, footer: e.target.value })} />
             <button className="rounded-sm border border-[var(--sw-line)] px-2 py-1 text-xs text-[var(--sw-muted)]" onClick={() => onChange({ ...poster, footer: undefined })}>
               默认页脚
             </button>
@@ -293,10 +293,10 @@ export default function XhsWorkspace() {
             </button>
           ))}
         </div>
-        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={importGzhDraft}>
+        <button className="sw-btn" onClick={importGzhDraft}>
           从公众号草稿导入
         </button>
-        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => mdFileRef.current?.click()}>
+        <button className="sw-btn" onClick={() => mdFileRef.current?.click()}>
           导入 MD / TXT
         </button>
         <input ref={mdFileRef} type="file" accept=".md,.markdown,.txt" hidden onChange={async (e) => {
@@ -314,12 +314,12 @@ export default function XhsWorkspace() {
           notify(`${f.name} · 已载入并重新拆文`);
         }} />
         <div className="mx-1 h-5 w-px bg-[var(--sw-line)]" />
-        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => setShowSettings(!showSettings)}>
+        <button className="sw-btn" onClick={() => setShowSettings(!showSettings)}>
           账号设置
         </button>
         {tab === "cards" && (
           <>
-            <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => {
+            <button className="sw-btn" onClick={() => {
               const r = autoStructureText(md);
               setMd(r.markdown);
               setCopyDirty(false);
@@ -328,10 +328,10 @@ export default function XhsWorkspace() {
             }}>
               智能补全结构
             </button>
-            <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => { setCopyDirty(false); setPosters(splitToPosters(md, profile)); notify("已按当前草稿重新拆文"); }}>
+            <button className="sw-btn" onClick={() => { setCopyDirty(false); setPosters(splitToPosters(md, profile)); notify("已按当前草稿重新拆文"); }}>
               重新拆文
             </button>
-            <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => window.open("/xhs/export/", "_blank")}>
+            <button className="sw-btn" onClick={() => window.open("/xhs/export/", "_blank")}>
               打开导出预览
             </button>
             <Btn primary small onClick={downloadPosterHtml}>
@@ -346,11 +346,11 @@ export default function XhsWorkspace() {
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="text-xs text-[var(--sw-muted)]">
               账号
-              <input className="mt-1 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.account} onChange={(e) => { const p = { ...profile, account: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
+              <input className="sw-input mt-1 w-full" value={profile.account} onChange={(e) => { const p = { ...profile, account: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
             </label>
             <label className="text-xs text-[var(--sw-muted)]">
               主题
-              <select className="mt-1 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.themeId} onChange={(e) => { const p = { ...profile, themeId: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }}>
+              <select className="sw-input mt-1 w-full" value={profile.themeId} onChange={(e) => { const p = { ...profile, themeId: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }}>
                 {["moyu-green", "red-white", "graphite-minimal", "zen-whitespace", "moyu-ticket", "olive-journal", "sentinel-dark"].map((id) => (
                   <option key={id} value={id}>{getTheme(id).name}</option>
                 ))}
@@ -358,7 +358,7 @@ export default function XhsWorkspace() {
             </label>
             <label className="text-xs text-[var(--sw-muted)]">
               落款语
-              <input className="mt-1 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.slogan} onChange={(e) => { const p = { ...profile, slogan: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
+              <input className="sw-input mt-1 w-full" value={profile.slogan} onChange={(e) => { const p = { ...profile, slogan: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
             </label>
           </div>
         </div>
@@ -379,7 +379,7 @@ export default function XhsWorkspace() {
           />
         </div>
 
-        <div className="min-h-0 overflow-y-auto bg-[#e9e9ee]">
+        <div className="min-h-0 overflow-y-auto bg-[var(--sw-panel-3)]">
           {tab === "copy" ? (
             <CopyPanel copy={copy} setCopy={(c) => { setCopy(c); setCopyDirty(true); }} />
           ) : (
