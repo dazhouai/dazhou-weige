@@ -641,7 +641,7 @@ export default function GzhWorkspace() {
 
       <div className="grid flex-1 grid-cols-2 overflow-hidden">
         {/* 左：编辑器 */}
-        <div className="flex flex-col border-r border-[var(--sw-line)]">
+        <div className="flex min-h-0 flex-col border-r border-[var(--sw-line)]">
           <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-3 py-1.5 text-[11px] text-[var(--sw-muted)]">
             <span>MARKDOWN / TXT 原稿</span>
             <span>{busy ? "转换中…" : "已自动保存"}</span>
@@ -656,7 +656,7 @@ export default function GzhWorkspace() {
         </div>
 
         {/* 右：预览 */}
-        <div className="flex flex-col bg-[#101418]">
+        <div className="flex min-h-0 flex-col bg-[#101418]">
           <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-3 py-1.5">
             <div className="flex gap-1 rounded-md border border-[var(--sw-line)] p-0.5 text-[11px]">
               {(["desktop", "focus", "mobile"] as const).map((d) => (

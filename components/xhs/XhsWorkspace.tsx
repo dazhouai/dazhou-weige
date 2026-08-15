@@ -349,7 +349,7 @@ export default function XhsWorkspace() {
       )}
 
       <div className="grid flex-1 grid-cols-2 overflow-hidden">
-        <div className="flex flex-col border-r border-[var(--sw-line)]">
+        <div className="flex min-h-0 flex-col border-r border-[var(--sw-line)]">
           <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-3 py-1.5 text-[11px] text-[var(--sw-muted)]">
             <span>小红书母稿（Markdown）</span>
             <span>已自动保存</span>
@@ -363,7 +363,7 @@ export default function XhsWorkspace() {
           />
         </div>
 
-        <div className="overflow-y-auto bg-[#101418]">
+        <div className="min-h-0 overflow-y-auto bg-[#101418]">
           {tab === "copy" ? (
             <CopyPanel copy={copy} setCopy={(c) => { setCopy(c); setCopyDirty(true); }} />
           ) : (
