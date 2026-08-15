@@ -1,35 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --sw-bg: #0f1115;
-  --sw-panel: #171a21;
-  --sw-panel-2: #1d212b;
-  --sw-line: #2a2f3a;
-  --sw-text: #e8eaee;
-  --sw-muted: #9aa3b2;
-  --sw-accent: #5eead4;
-  --sw-accent-2: #38bdf8;
+  /* Swiss：中性纸面 + 克莱因蓝点缀，细线建立秩序 */
+  --sw-bg: #f4f4f5;
+  --sw-panel: #ffffff;
+  --sw-panel-2: #fafafa;
+  --sw-line: #e4e4e7;
+  --sw-text: #0a0a0a;
+  --sw-muted: #71717a;
+  --sw-accent: #002fa7;
+  --sw-accent-2: #002fa7;
+  --sw-danger: #e4002b;
+  --sw-on-accent: #ffffff;
+  --sw-shadow: none;
 }
 
 html,
 body {
   background: var(--sw-bg);
   color: var(--sw-text);
+  font-family: "Helvetica Neue", Helvetica, -apple-system,
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-feature-settings: "tnum";
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3a4150 transparent;
+  scrollbar-color: #c9c9cf transparent;
 }
 
 textarea {
   resize: none;
+  font-feature-settings: "tnum";
+}
+
+button,
+input,
+select,
+textarea {
+  border-radius: 2px;
+}
+
+::selection {
+  background: #002fa7;
+  color: #ffffff;
 }
 
 .wechat-preview {
   background: #fff;
   color: #374151;
+  border: 1px solid #e4e4e7;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   overflow-wrap: break-word;
+}
+
+.sw-folio {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--sw-muted);
+  font-weight: 600;
 }

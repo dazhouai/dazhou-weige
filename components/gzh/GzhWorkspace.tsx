@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { X } from "lucide-react";
 import JSZip from "jszip";
 import mammoth from "mammoth/mammoth.browser";
 import TurndownService from "turndown";
@@ -123,14 +124,14 @@ function Btn({ onClick, children, primary, danger, small, disabled }: {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-md border font-medium transition ${
+      className={`rounded-sm border font-medium transition ${
         small ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-sm"
       } ${
         primary
-          ? "border-transparent bg-[var(--sw-accent)] text-black hover:brightness-110"
+          ? "border-transparent bg-[var(--sw-accent)] text-white hover:opacity-90"
           : danger
-            ? "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20"
-            : "border-[var(--sw-line)] bg-[var(--sw-panel-2)] text-[var(--sw-text)] hover:border-[var(--sw-muted)]"
+            ? "border-[var(--sw-danger)]/40 bg-[var(--sw-danger)]/5 text-[var(--sw-danger)] hover:bg-[var(--sw-danger)]/10"
+            : "border-[var(--sw-line)] bg-white text-[var(--sw-text)] hover:border-[var(--sw-text)]"
       } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
     >
       {children}
@@ -140,14 +141,14 @@ function Btn({ onClick, children, primary, danger, small, disabled }: {
 
 function Panel({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4" onClick={onClose}>
       <div
-        className="flex max-h-[86vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-[var(--sw-line)] bg-[var(--sw-panel)] shadow-2xl"
+        className="flex max-h-[86vh] w-full max-w-2xl flex-col overflow-hidden rounded-sm border border-[var(--sw-line)] bg-white"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-4 py-3">
           <h3 className="text-sm font-semibold">{title}</h3>
-          <button onClick={onClose} className="text-[var(--sw-muted)] hover:text-white">✕</button>
+          <button onClick={onClose} className="text-[var(--sw-muted)] hover:text-[var(--sw-text)]"><X size={14} /></button>
         </div>
         <div className="overflow-y-auto p-4">{children}</div>
       </div>
@@ -167,7 +168,7 @@ function ThemePanel({ settings, ip, onPick }: {
         <button
           key={t.id}
           onClick={() => onPick(t.id)}
-          className={`rounded-lg border p-3 text-left transition ${
+          className={`rounded-sm border p-3 text-left transition ${
             settings.themeId === t.id
               ? "border-[var(--sw-accent)] bg-[var(--sw-accent)]/10"
               : "border-[var(--sw-line)] bg-[var(--sw-panel-2)] hover:border-[var(--sw-muted)]"
@@ -214,7 +215,7 @@ function ColorLabPanel({ settings, setSettings, ip, setIp }: {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-4">
+      <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-4">
         <div className="mb-2 text-sm font-semibold">上传 IP 形象，自动提色</div>
         <p className="mb-3 text-xs leading-5 text-[var(--sw-muted)]">
           系统会提取代表色，生成 3 套以「{ip.ipName}」命名的专属配色，并可作为章节小标志。
@@ -225,7 +226,7 @@ function ColorLabPanel({ settings, setSettings, ip, setIp }: {
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onUpload(e.target.files?.[0])} />
           <Btn onClick={() => fileRef.current?.click()} primary small={false}>{busy ? "提色中…" : ip.ipAvatar ? "更换形象" : "上传形象"}</Btn>
           <input
-            className="flex-1 rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2 py-1.5 text-sm"
+            className="flex-1 rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2 py-1.5 text-sm"
             value={ip.ipName}
             onChange={(e) => setIp({ ...ip, ipName: e.target.value })}
             placeholder="IP 名称"
@@ -237,7 +238,7 @@ function ColorLabPanel({ settings, setSettings, ip, setIp }: {
         <div className="mb-2 text-sm font-semibold">角色色分配（逐色调整）</div>
         <div className="grid grid-cols-2 gap-2">
           {ROLE_LABELS.map(([k, label]) => (
-            <label key={k} className="flex items-center justify-between rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-3 py-2 text-xs">
+            <label key={k} className="flex items-center justify-between rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-3 py-2 text-xs">
               <span>{label}</span>
               <input
                 type="color"
@@ -274,7 +275,7 @@ function EndingPanel({ ending, setEnding, enabled, setEnabled }: {
         启用固定结尾
       </label>
       <textarea
-        className="h-40 w-full rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3 text-sm leading-6"
+        className="h-40 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3 text-sm leading-6"
         value={ending.text}
         onChange={(e) => setEnding({ ...ending, text: e.target.value })}
         placeholder="每一行将作为独立段落渲染…"
@@ -296,11 +297,13 @@ function TitlePanel({ md }: { md: string }) {
   const [copied, setCopied] = useState("");
   return (
     <div className="space-y-2">
-      <p className="text-xs leading-5 text-[var(--sw-muted)]">本地规则生成，覆盖 4 个角度；首选标题标 ⭐。</p>
+      <p className="text-xs leading-5 text-[var(--sw-muted)]">本地规则生成，覆盖 4 个角度；首选标题带「主推」标记。</p>
       {titles.map((t) => (
-        <div key={t.title} className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-sm ${t.preferred ? "border-[var(--sw-accent)]/60 bg-[var(--sw-accent)]/10" : "border-[var(--sw-line)] bg-[var(--sw-panel-2)]"}`}>
+        <div key={t.title} className={`flex items-center justify-between gap-3 rounded-sm border px-3 py-2.5 text-sm ${t.preferred ? "border-[var(--sw-accent)]/60 bg-[var(--sw-accent)]/10" : "border-[var(--sw-line)] bg-[var(--sw-panel-2)]"}`}>
           <span className="flex-1">
-            {t.preferred ? <span className="mr-1.5">⭐</span> : null}
+            {t.preferred ? (
+              <span className="mr-1.5 rounded-sm bg-[var(--sw-accent)] px-1 py-0.5 text-[10px] font-semibold text-white">主推</span>
+            ) : null}
             {t.title}
             <span className="ml-2 text-[10px] text-[var(--sw-muted)]">{t.angle}</span>
           </span>
@@ -324,23 +327,23 @@ function CompliancePanel({ output }: { output: GzhOutput }) {
   const r = output.report;
   return (
     <div className="space-y-3 text-sm">
-      <div className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold ${r.ok ? "bg-emerald-500/10 text-emerald-300" : "bg-red-500/10 text-red-300"}`}>
+      <div className={`flex items-center gap-2 rounded-sm px-3 py-2.5 text-sm font-semibold ${r.ok ? "bg-emerald-500/10 text-emerald-700" : "bg-red-500/10 text-red-700"}`}>
         {r.ok ? "✓ 校验通过，可以安全复制" : `✗ 还有 ${r.errors} 处需要处理`}
       </div>
       <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
+        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
           <div className="font-semibold text-[var(--sw-muted)]">leaf 包裹</div>
           <div className="mt-1 text-lg font-bold">{r.leafIssues === 0 ? "0 遗漏" : `${r.leafIssues} 处`}</div>
         </div>
-        <div className="rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
+        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
           <div className="font-semibold text-[var(--sw-muted)]">禁用标签/样式</div>
           <div className="mt-1 text-lg font-bold">{r.forbiddenTags.length + r.forbiddenCss.length === 0 ? "0 项" : `${r.forbiddenTags.length + r.forbiddenCss.length} 项`}</div>
         </div>
-        <div className="rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
+        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
           <div className="font-semibold text-[var(--sw-muted)]">半角标点</div>
           <div className="mt-1 text-lg font-bold">{r.punctuationIssues.length === 0 ? "0 处" : `${r.punctuationIssues.length} 处`}</div>
         </div>
-        <div className="rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
+        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
           <div className="font-semibold text-[var(--sw-muted)]">图片</div>
           <div className="mt-1 text-lg font-bold">
             {r.images.total === 0 ? "无" : `${r.images.embedded}/${r.images.total} 已内嵌`}
@@ -348,12 +351,12 @@ function CompliancePanel({ output }: { output: GzhOutput }) {
         </div>
       </div>
       {(r.forbiddenTags.length > 0 || r.forbiddenCss.length > 0) && (
-        <div className="rounded-lg bg-red-500/10 p-3 text-xs text-red-300">
+        <div className="rounded-sm bg-red-500/10 p-3 text-xs text-red-700">
           发现：{[...r.forbiddenTags, ...r.forbiddenCss].join("、")}
         </div>
       )}
       {r.punctuationIssues.length > 0 && (
-        <div className="rounded-lg bg-amber-500/10 p-3 text-xs text-amber-200">
+        <div className="rounded-sm bg-amber-500/10 p-3 text-xs text-amber-700">
           半角标点位置：{r.punctuationIssues.slice(0, 5).map((p) => `「${p.text}」`).join(" ")}
         </div>
       )}
@@ -570,22 +573,22 @@ export default function GzhWorkspace() {
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--sw-line)] bg-[var(--sw-panel)] px-3 py-2">
         <div className="flex items-center gap-1.5">
           <button
-            className="flex items-center gap-2 rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm"
+            className="flex items-center gap-2 rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm"
             onClick={() => setPanel(panel === "theme" ? null : "theme")}
           >
             <span className="h-3 w-3 rounded-full" style={{ background: theme.accent }} />
             主题
           </button>
-          <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "colorlab" ? null : "colorlab")}>
+          <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "colorlab" ? null : "colorlab")}>
             配色实验室
           </button>
-          <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "ending" ? null : "ending")}>
+          <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "ending" ? null : "ending")}>
             固定结尾
           </button>
-          <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "titles" ? null : "titles")}>
+          <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "titles" ? null : "titles")}>
             爆款标题
           </button>
-          <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "compliance" ? null : "compliance")}>
+          <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm" onClick={() => setPanel(panel === "compliance" ? null : "compliance")}>
             合规报告
           </button>
         </div>
@@ -601,7 +604,7 @@ export default function GzhWorkspace() {
           <span className="w-8 text-[var(--sw-text)]">{settings.lineHeight}</span>
         </label>
         <select
-          className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2 py-1.5 text-xs"
+          className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2 py-1.5 text-xs"
           value={settings.fontFamily}
           onChange={(e) => setSettings({ ...settings, fontFamily: e.target.value as GzhSettings["fontFamily"] })}
         >
@@ -609,7 +612,7 @@ export default function GzhWorkspace() {
           <option value="heiti">思源黑体</option>
         </select>
         <select
-          className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2 py-1.5 text-xs"
+          className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2 py-1.5 text-xs"
           value={settings.chapterStyle}
           onChange={(e) => setSettings({ ...settings, chapterStyle: e.target.value as ChapterStyleId })}
         >
@@ -618,19 +621,19 @@ export default function GzhWorkspace() {
           ))}
         </select>
         <div className="mx-1 h-5 w-px bg-[var(--sw-line)]" />
-        <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => mdFileRef.current?.click()}>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => mdFileRef.current?.click()}>
           导入 MD / TXT
         </button>
-        <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => pkgFileRef.current?.click()}>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => pkgFileRef.current?.click()}>
           导入文章包
         </button>
-        <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => rtFileRef.current?.click()}>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => rtFileRef.current?.click()}>
           导入富文本
         </button>
-        <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => docxFileRef.current?.click()}>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => docxFileRef.current?.click()}>
           导入 docx
         </button>
-        <button className="rounded-md border border-red-500/40 bg-red-500/10 px-2.5 py-1.5 text-xs text-red-300" onClick={() => setMd("")}>
+        <button className="rounded-sm border border-[var(--sw-danger)]/40 bg-[var(--sw-danger)]/5 px-2.5 py-1.5 text-xs text-[var(--sw-danger)]" onClick={() => setMd("")}>
           清空
         </button>
         <input ref={mdFileRef} type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden onChange={(e) => importMdFile(e.target.files?.[0])} />
@@ -642,9 +645,9 @@ export default function GzhWorkspace() {
       <div className="grid flex-1 grid-cols-2 overflow-hidden">
         {/* 左：编辑器 */}
         <div className="flex min-h-0 flex-col border-r border-[var(--sw-line)]">
-          <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-3 py-1.5 text-[11px] text-[var(--sw-muted)]">
-            <span>MARKDOWN / TXT 原稿</span>
-            <span>{busy ? "转换中…" : "已自动保存"}</span>
+          <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-3 py-1.5">
+            <span className="sw-folio">01 · 原稿<span className="ml-2 font-normal normal-case tracking-normal text-[var(--sw-muted)]">MARKDOWN / TXT</span></span>
+            <span className="text-[11px] text-[var(--sw-muted)]">{busy ? "转换中…" : "已自动保存"}</span>
           </div>
           <textarea
             className="flex-1 bg-transparent p-4 font-mono text-[13px] leading-6 text-[var(--sw-text)] outline-none placeholder:text-[var(--sw-muted)]"
@@ -656,37 +659,40 @@ export default function GzhWorkspace() {
         </div>
 
         {/* 右：预览 */}
-        <div className="flex min-h-0 flex-col bg-[#101418]">
+        <div className="flex min-h-0 flex-col bg-[#e9e9ee]">
           <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-3 py-1.5">
-            <div className="flex gap-1 rounded-md border border-[var(--sw-line)] p-0.5 text-[11px]">
+            <div className="flex items-center gap-2">
+              <span className="sw-folio">02 · 预览</span>
+              <div className="flex gap-1 rounded-sm border border-[var(--sw-line)] p-0.5 text-[11px]">
               {(["desktop", "focus", "mobile"] as const).map((d) => (
                 <button
                   key={d}
                   onClick={() => setDevice(d)}
-                  className={`rounded px-2 py-1 ${device === d ? "bg-[var(--sw-panel-2)] text-white" : "text-[var(--sw-muted)]"}`}
+                  className={`rounded-sm px-2 py-1 ${device === d ? "bg-[var(--sw-accent)] text-white" : "text-[var(--sw-muted)] hover:text-[var(--sw-text)]"}`}
                 >
                   {{ desktop: "公众号", focus: "专注", mobile: "手机" }[d]}
                 </button>
               ))}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={downloadWechatImages}
-                className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1 text-xs"
+                className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1 text-xs"
                 title="导出本地图片为微信图片包"
               >
                 微信图片
               </button>
               <button
                 onClick={copyToWechat}
-                className={`rounded-md px-3 py-1 text-xs font-semibold ${copied ? "bg-emerald-500 text-black" : "bg-[var(--sw-accent)] text-black hover:brightness-110"}`}
+                className={`rounded-sm px-3 py-1 text-xs font-semibold text-white ${copied ? "bg-emerald-600" : "bg-[var(--sw-accent)] hover:opacity-90"}`}
               >
-                {copied ? "已复制 ✓" : "复制到公众号"}
+                {copied ? "已复制" : "复制到公众号"}
               </button>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto p-4">
-            <section id="gzh-preview" className={`wechat-preview rounded-lg shadow-2xl ${previewClass}`} style={{ padding: "28px 20px" }}>
+            <section id="gzh-preview" className={`wechat-preview rounded-sm ${previewClass}`} style={{ padding: "28px 20px" }}>
               <section dangerouslySetInnerHTML={{ __html: output.html }} />
             </section>
           </div>
@@ -720,7 +726,7 @@ export default function GzhWorkspace() {
       )}
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-lg bg-black/85 px-4 py-2 text-sm text-white shadow-xl">
+        <div className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-sm border border-[var(--sw-line)] bg-white px-4 py-2 text-sm text-[var(--sw-text)] shadow-md">
           {toast}
         </div>
       )}

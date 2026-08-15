@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowDown, ArrowUp, X } from "lucide-react";
 import type { Poster, PosterKind, XhsCopy, XhsProfile } from "@/lib/types";
 import { DEFAULT_POSTERS, DEFAULT_XHS_COPY, DEFAULT_XHS_PROFILE, KEYS, load, save } from "@/lib/store";
 import { generateXhsCopy } from "@/lib/xhsCopy";
@@ -34,14 +35,14 @@ function Btn({ onClick, children, primary, danger, small, disabled }: {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-md border font-medium transition ${
+      className={`rounded-sm border font-medium transition ${
         small ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-sm"
       } ${
         primary
-          ? "border-transparent bg-[var(--sw-accent)] text-black hover:brightness-110"
+          ? "border-transparent bg-[var(--sw-accent)] text-white hover:opacity-90"
           : danger
-            ? "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20"
-            : "border-[var(--sw-line)] bg-[var(--sw-panel-2)] text-[var(--sw-text)] hover:border-[var(--sw-muted)]"
+            ? "border-[var(--sw-danger)]/40 bg-[var(--sw-danger)]/5 text-[var(--sw-danger)] hover:bg-[var(--sw-danger)]/10"
+            : "border-[var(--sw-line)] bg-white text-[var(--sw-text)] hover:border-[var(--sw-text)]"
       } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
     >
       {children}
@@ -71,7 +72,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
           {copy.titles.map((t, i) => (
             <div key={i} className="flex items-center gap-2">
               <input
-                className="flex-1 rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-2 text-sm"
+                className="flex-1 rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-2 text-sm"
                 value={t}
                 onChange={(e) => {
                   const titles = [...copy.titles];
@@ -79,7 +80,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
                   setCopy({ ...copy, titles, preferredTitle: i === 0 ? e.target.value : copy.preferredTitle });
                 }}
               />
-              {i === 0 && <span className="text-xs text-amber-300">⭐ 主推</span>}
+              {i === 0 && <span className="rounded-sm bg-[var(--sw-accent)] px-1.5 py-0.5 text-[10px] font-semibold text-white">主推</span>}
               <button className="text-xs text-[var(--sw-accent)] hover:underline" onClick={() => copyText(`t${i}`, t)}>
                 {copied === `t${i}` ? "✓" : "复制"}
               </button>
@@ -96,7 +97,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
           </button>
         </div>
         <textarea
-          className="h-72 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3 text-sm leading-6"
+          className="h-72 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3 text-sm leading-6"
           value={copy.body}
           onChange={(e) => setCopy({ ...copy, body: e.target.value })}
         />
@@ -113,7 +114,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
           {copy.tags.map((t, i) => (
             <span key={i} className="flex items-center gap-1 rounded-full border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1 text-xs">
               {t}
-              <button className="text-[var(--sw-muted)] hover:text-red-300" onClick={() => setCopy({ ...copy, tags: copy.tags.filter((_, j) => j !== i) })}>×</button>
+              <button className="text-[var(--sw-muted)] hover:text-[var(--sw-danger)]" onClick={() => setCopy({ ...copy, tags: copy.tags.filter((_, j) => j !== i) })}><X size={11} /></button>
             </span>
           ))}
           <input
@@ -134,7 +135,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
         <h3 className="mb-2 text-sm font-semibold">发布建议（不入正文）</h3>
         <div className="grid gap-2 sm:grid-cols-2">
           {(["time", "coverNote", "comment", "repost"] as const).map((k) => (
-            <label key={k} className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-2.5 text-xs">
+            <label key={k} className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-2.5 text-xs">
               <span className="mb-1 block text-[var(--sw-muted)]">
                 {{ time: "发布时间", coverNote: "首图注意", comment: "评论预埋", repost: "二次分发" }[k]}
               </span>
@@ -154,7 +155,7 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
 function PosterEditor({ poster, onChange }: { poster: Poster; onChange: (p: Poster) => void }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-2)]">
+    <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)]">
       <button className="flex w-full items-center justify-between px-3 py-2.5 text-left" onClick={() => setExpanded(!expanded)}>
         <span className="flex items-center gap-2 text-sm">
           <span className="rounded bg-[var(--sw-accent)]/15 px-1.5 py-0.5 text-[10px] font-bold text-[var(--sw-accent)]">
@@ -166,26 +167,26 @@ function PosterEditor({ poster, onChange }: { poster: Poster; onChange: (p: Post
       </button>
       {expanded && (
         <div className="space-y-2 border-t border-[var(--sw-line)] p-3">
-          <input className="w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.title} placeholder="标题" onChange={(e) => onChange({ ...poster, title: e.target.value })} />
+          <input className="w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.title} placeholder="标题" onChange={(e) => onChange({ ...poster, title: e.target.value })} />
           {(poster.kind === "cover" || poster.kind === "data" || poster.kind === "shift" || poster.kind === "workspace" || poster.kind === "principle" || poster.kind === "reflection") && (
-            <textarea className="h-24 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.lines.join("\n")} placeholder="每行一条内容" onChange={(e) => onChange({ ...poster, lines: e.target.value.split("\n") })} />
+            <textarea className="h-24 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.lines.join("\n")} placeholder="每行一条内容" onChange={(e) => onChange({ ...poster, lines: e.target.value.split("\n") })} />
           )}
           {(poster.kind === "workflow") && (
-            <textarea className="h-24 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.steps || []).map((s) => s.text).join("\n")} placeholder="每行一步" onChange={(e) => onChange({ ...poster, steps: e.target.value.split("\n").filter(Boolean).map((text, i) => ({ num: String(i + 1), text })) })} />
+            <textarea className="h-24 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.steps || []).map((s) => s.text).join("\n")} placeholder="每行一步" onChange={(e) => onChange({ ...poster, steps: e.target.value.split("\n").filter(Boolean).map((text, i) => ({ num: String(i + 1), text })) })} />
           )}
           {(poster.kind === "division") && (
-            <textarea className="h-20 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.comparison || []).join("\n")} placeholder="第一行：没做…；第二行：做了…" onChange={(e) => onChange({ ...poster, comparison: e.target.value.split("\n").filter(Boolean) })} />
+            <textarea className="h-20 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.comparison || []).join("\n")} placeholder="第一行：没做…；第二行：做了…" onChange={(e) => onChange({ ...poster, comparison: e.target.value.split("\n").filter(Boolean) })} />
           )}
           {(poster.kind === "end") && (
             <>
-              <textarea className="h-20 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.fitItems || []).join("\n")} placeholder="适合谁（每行一条）" onChange={(e) => onChange({ ...poster, fitItems: e.target.value.split("\n").filter(Boolean) })} />
-              <input className="w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.notFitItem || ""} placeholder="不适合谁" onChange={(e) => onChange({ ...poster, notFitItem: e.target.value })} />
-              <textarea className="h-16 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.ctaItems || []).join("\n")} placeholder="CTA（每行一条）" onChange={(e) => onChange({ ...poster, ctaItems: e.target.value.split("\n").filter(Boolean) })} />
+              <textarea className="h-20 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.fitItems || []).join("\n")} placeholder="适合谁（每行一条）" onChange={(e) => onChange({ ...poster, fitItems: e.target.value.split("\n").filter(Boolean) })} />
+              <input className="w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={poster.notFitItem || ""} placeholder="不适合谁" onChange={(e) => onChange({ ...poster, notFitItem: e.target.value })} />
+              <textarea className="h-16 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-sm" value={(poster.ctaItems || []).join("\n")} placeholder="CTA（每行一条）" onChange={(e) => onChange({ ...poster, ctaItems: e.target.value.split("\n").filter(Boolean) })} />
             </>
           )}
           <div className="flex gap-2">
-            <input className="flex-1 rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-xs" value={poster.footer || ""} placeholder="页脚（默认 @账号）" onChange={(e) => onChange({ ...poster, footer: e.target.value })} />
-            <button className="rounded-md border border-[var(--sw-line)] px-2 py-1 text-xs text-[var(--sw-muted)]" onClick={() => onChange({ ...poster, footer: undefined })}>
+            <input className="flex-1 rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] px-2.5 py-1.5 text-xs" value={poster.footer || ""} placeholder="页脚（默认 @账号）" onChange={(e) => onChange({ ...poster, footer: e.target.value })} />
+            <button className="rounded-sm border border-[var(--sw-line)] px-2 py-1 text-xs text-[var(--sw-muted)]" onClick={() => onChange({ ...poster, footer: undefined })}>
               默认页脚
             </button>
           </div>
@@ -284,17 +285,17 @@ export default function XhsWorkspace() {
   return (
     <div className="flex h-[calc(100vh-56px)] flex-col">
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--sw-line)] bg-[var(--sw-panel)] px-3 py-2">
-        <div className="flex gap-1 rounded-md border border-[var(--sw-line)] p-0.5 text-sm">
+        <div className="flex gap-1 rounded-sm border border-[var(--sw-line)] p-0.5 text-sm">
           {(["copy", "cards"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} className={`rounded px-3 py-1.5 ${tab === t ? "bg-[var(--sw-panel-2)] text-white" : "text-[var(--sw-muted)]"}`}>
+            <button key={t} onClick={() => setTab(t)} className={`rounded-sm px-3 py-1.5 ${tab === t ? "bg-[var(--sw-accent)] text-white" : "text-[var(--sw-muted)] hover:text-[var(--sw-text)]"}`}>
               {t === "copy" ? "文案" : "图文卡片"}
             </button>
           ))}
         </div>
-        <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={importGzhDraft}>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={importGzhDraft}>
           从公众号草稿导入
         </button>
-        <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => mdFileRef.current?.click()}>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => mdFileRef.current?.click()}>
           导入 MD / TXT
         </button>
         <input ref={mdFileRef} type="file" accept=".md,.markdown,.txt" hidden onChange={async (e) => {
@@ -307,15 +308,15 @@ export default function XhsWorkspace() {
           notify(`${f.name} · 已载入并重新拆文`);
         }} />
         <div className="mx-1 h-5 w-px bg-[var(--sw-line)]" />
-        <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => setShowSettings(!showSettings)}>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => setShowSettings(!showSettings)}>
           账号设置
         </button>
         {tab === "cards" && (
           <>
-            <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => { setCopyDirty(false); setPosters(splitToPosters(md, profile)); notify("已按当前草稿重新拆文"); }}>
+            <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => { setCopyDirty(false); setPosters(splitToPosters(md, profile)); notify("已按当前草稿重新拆文"); }}>
               重新拆文
             </button>
-            <button className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => window.open("/xhs/export/", "_blank")}>
+            <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => window.open("/xhs/export/", "_blank")}>
               打开导出预览
             </button>
             <Btn primary small onClick={downloadPosterHtml}>
@@ -330,11 +331,11 @@ export default function XhsWorkspace() {
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="text-xs text-[var(--sw-muted)]">
               账号
-              <input className="mt-1 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.account} onChange={(e) => { const p = { ...profile, account: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
+              <input className="mt-1 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.account} onChange={(e) => { const p = { ...profile, account: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
             </label>
             <label className="text-xs text-[var(--sw-muted)]">
               主题
-              <select className="mt-1 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.themeId} onChange={(e) => { const p = { ...profile, themeId: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }}>
+              <select className="mt-1 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.themeId} onChange={(e) => { const p = { ...profile, themeId: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }}>
                 {["moyu-green", "red-white", "graphite-minimal", "zen-whitespace", "moyu-ticket", "olive-journal", "sentinel-dark"].map((id) => (
                   <option key={id} value={id}>{getTheme(id).name}</option>
                 ))}
@@ -342,7 +343,7 @@ export default function XhsWorkspace() {
             </label>
             <label className="text-xs text-[var(--sw-muted)]">
               落款语
-              <input className="mt-1 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.slogan} onChange={(e) => { const p = { ...profile, slogan: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
+              <input className="mt-1 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-sm text-[var(--sw-text)]" value={profile.slogan} onChange={(e) => { const p = { ...profile, slogan: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
             </label>
           </div>
         </div>
@@ -363,32 +364,32 @@ export default function XhsWorkspace() {
           />
         </div>
 
-        <div className="min-h-0 overflow-y-auto bg-[#101418]">
+        <div className="min-h-0 overflow-y-auto bg-[#e9e9ee]">
           {tab === "copy" ? (
             <CopyPanel copy={copy} setCopy={(c) => { setCopy(c); setCopyDirty(true); }} />
           ) : (
             <div className="space-y-2 p-4">
-              <div className="mb-3 rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel)] p-3 text-xs leading-5 text-[var(--sw-muted)]">
+              <div className="mb-3 rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel)] p-3 text-xs leading-5 text-[var(--sw-muted)]">
                 默认 9 卡海报制：封面 → 数据 → 痛点 → 方法 → 流程 → 心法 → 对比 → 避坑 → 尾卡。点「编辑」改文字，可删卡、上下排序；「打开导出预览」页可直接逐张/全部下载 2160×2880 PNG，也可下载 HTML 后本地跑 <code className="text-[var(--sw-accent)]">npm run xhs:cards</code> 出图。
               </div>
               {posters.map((p, i) => (
                 <div key={p.id} className="space-y-1">
                   <PosterEditor poster={p} onChange={(np) => changePoster(i, np)} />
                   <div className="flex gap-1.5 px-1 pb-2">
-                    <button className="rounded border border-[var(--sw-line)] px-1.5 py-0.5 text-[10px] text-[var(--sw-muted)] hover:text-white" disabled={i === 0} onClick={() => setPosters(reorderPosters(posters, i, i - 1))}>
-                      ↑
+                    <button className="rounded-sm border border-[var(--sw-line)] px-1.5 py-0.5 text-[var(--sw-muted)] hover:text-[var(--sw-text)] disabled:opacity-30" disabled={i === 0} onClick={() => setPosters(reorderPosters(posters, i, i - 1))}>
+                      <ArrowUp size={12} />
                     </button>
-                    <button className="rounded border border-[var(--sw-line)] px-1.5 py-0.5 text-[10px] text-[var(--sw-muted)] hover:text-white" disabled={i === posters.length - 1} onClick={() => setPosters(reorderPosters(posters, i, i + 1))}>
-                      ↓
+                    <button className="rounded-sm border border-[var(--sw-line)] px-1.5 py-0.5 text-[var(--sw-muted)] hover:text-[var(--sw-text)] disabled:opacity-30" disabled={i === posters.length - 1} onClick={() => setPosters(reorderPosters(posters, i, i + 1))}>
+                      <ArrowDown size={12} />
                     </button>
-                    <button className="ml-auto rounded border border-red-500/30 px-1.5 py-0.5 text-[10px] text-red-300 hover:bg-red-500/10" onClick={() => setPosters(posters.filter((_, j) => j !== i))}>
+                    <button className="ml-auto rounded-sm border border-[var(--sw-danger)]/30 px-1.5 py-0.5 text-[var(--sw-danger)] hover:bg-[var(--sw-danger)]/10" onClick={() => setPosters(posters.filter((_, j) => j !== i))}>
                       删除
                     </button>
                   </div>
                 </div>
               ))}
               <button
-                className="w-full rounded-md border border-dashed border-[var(--sw-line)] py-2 text-xs text-[var(--sw-muted)] hover:border-[var(--sw-accent)] hover:text-[var(--sw-accent)]"
+                className="w-full rounded-sm border border-dashed border-[var(--sw-line)] py-2 text-xs text-[var(--sw-muted)] hover:border-[var(--sw-accent)] hover:text-[var(--sw-accent)]"
                 onClick={() => {
                   const kind = KIND_ORDER.find((k) => !posters.some((p) => p.kind === k)) || "cover";
                   setPosters([...posters, { id: `p${Date.now()}`, kind, title: `新${KIND_NAMES[kind]}卡`, lines: [] }]);
@@ -402,7 +403,7 @@ export default function XhsWorkspace() {
       </div>
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-lg bg-black/85 px-4 py-2 text-sm text-white shadow-xl">
+        <div className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-sm border border-[var(--sw-line)] bg-white px-4 py-2 text-sm text-[var(--sw-text)] shadow-md">
           {toast}
         </div>
       )}

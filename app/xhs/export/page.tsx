@@ -78,14 +78,14 @@ export default function PosterExportPage() {
           <button
             onClick={downloadAll}
             disabled={busy !== null}
-            className="rounded-md bg-[var(--sw-accent)] px-3 py-1 text-xs font-semibold text-black hover:brightness-110 disabled:opacity-50"
+            className="rounded-sm bg-[var(--sw-accent)] px-3 py-1 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
           >
             {busy || "下载全部 PNG"}
           </button>
           <a
             href={`data:text/html;charset=utf-8,${encodeURIComponent(doc)}`}
             download={`sentinel-xhs-${posters.length}cards.html`}
-            className="rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-3 py-1 text-xs text-[var(--sw-text)]"
+            className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-3 py-1 text-xs text-[var(--sw-text)]"
           >
             下载海报 HTML
           </a>
@@ -99,7 +99,7 @@ export default function PosterExportPage() {
             <button
               onClick={() => downloadOne(i, p.kind)}
               disabled={busy !== null}
-              className="mt-3 w-full rounded-md border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-3 py-1.5 text-xs text-[var(--sw-text)] hover:border-[var(--sw-accent)] disabled:opacity-50"
+              className="mt-3 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-3 py-1.5 text-xs text-[var(--sw-text)] hover:border-[var(--sw-accent)] disabled:opacity-50"
             >
               下载此张 PNG
             </button>
