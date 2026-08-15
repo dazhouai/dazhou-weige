@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sentinel微排版
 
-## Getting Started
+公众号 + 小红书双独立排版工作台。一篇 Markdown 母稿，同时产出公众号富文本与小红书图文海报。
 
-First, run the development server:
+纯前端（Next.js 静态导出）、无后端、无登录，数据全部保存在浏览器 localStorage。
+
+## 快速开始
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `/`：公众号排版工作台（主题 / 配色实验室 / 章节样式 / 固定结尾 / 合规校验 / 一键复制）
+- `/xhs/`：小红书排版工作台（文案 / 9 卡海报编辑）
+- `/xhs/export/`：海报全尺寸导出预览
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 小红书海报出图（HTML + Playwright）
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. 在 `/xhs/` 编辑文案与卡片，点「下载海报 HTML」保存 `sentinel-xhs-Ncards.html`；
+2. 本地执行（自动复用你本机 Chrome）：
 
-## Learn More
+```bash
+npm run xhs:cards sentinel-xhs-9cards.html
+```
 
-To learn more about Next.js, take a look at the following resources:
+输出到 `output/`：`xhs-01-cover.png` ~ `xhs-NN-xxx.png`（1080×1440 @2x = 2160×2880）与 `preview_全部卡片.png`。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 验证
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run test:render   # 渲染回归 + 合规断言 + 小红书拆文
+npm run lint
+npm run build         # 静态导出到 out/
+```
 
-## Deploy on Vercel
+## 设计说明
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 公众号输出直接构造平台红线合规 HTML：无 div/class/id/style 标签、全内联样式、每个文本节点 `<span leaf="">`、禁用 fixed/float/@media/CSS 变量；复制用 `ClipboardItem text/html`，本地图片自动压缩内嵌，并支持导出「微信图片」包兜底。
+- 智能引擎（本地规则，不接大模型）：章节自动编号（结语章 ∞）、英文标签、每段 1–3 个关键词下划线、精选导读卡、全角标点归一、爆款标题 10 选 1。
+- 主题：摸鱼绿 / 红白色系 / 石墨极简 / 留白禅意 / 摸鱼票据 / 橄榄手记 / 哨兵深色；上传 IP 形象可自动提色生成 3 套专属配色。
+- 小红书默认 9 卡海报制：封面 → 数据 → 痛点 → 方法 → 流程 → 心法 → 对比 → 避坑 → 尾卡，支持增删排序与逐卡编辑。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 部署（验收后）
+
+```bash
+npm run build
+```
+
+把 `out/` 部署到任意静态托管（Vercel / Netlify / GitHub Pages 均可）。
