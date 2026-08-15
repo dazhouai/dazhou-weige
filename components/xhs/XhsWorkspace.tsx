@@ -369,7 +369,7 @@ export default function XhsWorkspace() {
           ) : (
             <div className="space-y-2 p-4">
               <div className="mb-3 rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel)] p-3 text-xs leading-5 text-[var(--sw-muted)]">
-                默认 9 卡海报制：封面 → 数据 → 痛点 → 方法 → 流程 → 心法 → 对比 → 避坑 → 尾卡。点「编辑」改文字，可删卡、上下排序；改完下载 HTML，本地跑 <code className="text-[var(--sw-accent)]">npm run xhs:cards</code> 出 2160×2880 PNG。
+                默认 9 卡海报制：封面 → 数据 → 痛点 → 方法 → 流程 → 心法 → 对比 → 避坑 → 尾卡。点「编辑」改文字，可删卡、上下排序；「打开导出预览」页可直接逐张/全部下载 2160×2880 PNG，也可下载 HTML 后本地跑 <code className="text-[var(--sw-accent)]">npm run xhs:cards</code> 出图。
               </div>
               {posters.map((p, i) => (
                 <div key={p.id} className="space-y-1">

@@ -17,6 +17,12 @@ npm run dev        # http://localhost:3000/
 
 ## 小红书海报出图（HTML + Playwright）
 
+两种方式任选：
+
+**方式一（零命令，推荐给不跑脚本的人）**：在 `/xhs/` 编辑卡片后，点「打开导出预览」，导出页支持「下载全部 PNG」逐张落盘（1080×1440 @2x = 2160×2880）；下载的海报 HTML 自带下载工具栏，别人拿到文件用浏览器打开，点「下载全部 PNG」或单张按钮即可出图，无需装任何环境。
+
+**方式二（本地脚本，批量稳定）**：
+
 1. 在 `/xhs/` 编辑文案与卡片，点「下载海报 HTML」保存 `sentinel-xhs-Ncards.html`；
 2. 本地执行（自动复用你本机 Chrome）：
 
@@ -25,6 +31,8 @@ npm run xhs:cards sentinel-xhs-9cards.html
 ```
 
 输出到 `output/`：`xhs-01-cover.png` ~ `xhs-NN-xxx.png`（1080×1440 @2x = 2160×2880）与 `preview_全部卡片.png`。
+
+> 说明：海报 HTML 内嵌了 html2canvas（base64 自包含，约 275KB），断网也能用；若海报包含外链图片，浏览器安全限制会拦截导出，此时请用方式二的 Playwright 脚本。
 
 ## 验证
 

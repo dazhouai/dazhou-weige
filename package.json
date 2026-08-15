@@ -11,6 +11,7 @@
     "test:render": "tsx scripts/test-render.ts"
   },
   "dependencies": {
+    "html2canvas": "^1.4.1",
     "jszip": "^3.10.1",
     "mammoth": "^1.12.1",
     "marked": "^18.0.9",

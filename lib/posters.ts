@@ -1,5 +1,97 @@
 import type { Poster, ThemeManifest } from "./types";
 import { esc } from "./htmlSafe";
+import { html2canvasBase64 } from "./vendor/html2canvasBase64";
+
+export const POSTER_CAPTURE_SCRIPT = `
+(function () {
+  var ready = false;
+  try {
+    eval(atob("${html2canvasBase64}"));
+    ready = typeof window.html2canvas === "function";
+  } catch (e) { console.error("html2canvas 加载失败", e); }
+  function captureEl(el) {
+    return new Promise(function (resolve) {
+      if (!ready) { alert("截图引擎加载失败，请改用 Playwright 脚本导出。"); resolve(null); return; }
+      try {
+        window.html2canvas(el, { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false })
+          .then(resolve)
+          .catch(function () { resolve(null); });
+      } catch (e) {
+        resolve(null);
+      }
+    });
+  }
+  function downloadCanvas(canvas, name) {
+    var a = document.createElement("a");
+    a.download = name;
+    a.href = canvas.toDataURL("image/png");
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+  function posterName(i, kind) {
+    var idx = String(i + 1);
+    while (idx.length < 2) idx = "0" + idx;
+    return "xhs-" + idx + "-" + (kind || "poster") + ".png";
+  }
+  window.__sentinelCapture = {
+    captureEl: captureEl,
+    async download(i, kind) {
+      var el = document.querySelectorAll(".poster.xhs")[i];
+      if (!el) return;
+      var canvas = await captureEl(el);
+      if (!canvas) {
+        alert("下载失败：海报可能包含外链图片，浏览器安全限制无法导出。请改用 npm run xhs:cards 脚本。");
+        return;
+      }
+      downloadCanvas(canvas, posterName(i, kind || el.getAttribute("data-kind") || "poster"));
+    },
+    async downloadAll() {
+      var els = document.querySelectorAll(".poster.xhs");
+      for (var i = 0; i < els.length; i++) {
+        var canvas = await captureEl(els[i]);
+        if (!canvas) {
+          alert("第 " + (i + 1) + " 张下载失败：可能含外链图片，请改用 Playwright 脚本。");
+          continue;
+        }
+        downloadCanvas(canvas, posterName(i, els[i].getAttribute("data-kind") || "poster"));
+        await new Promise(function (r) { setTimeout(r, 350); });
+      }
+    }
+  };
+  // 生成顶部下载工具栏
+  var bar = document.createElement("div");
+  bar.setAttribute("style",
+    "position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;align-items:center;gap:8px;flex-wrap:wrap;" +
+    "padding:10px 16px;background:#0f1115;color:#e8eaee;font-family:-apple-system,'PingFang SC',sans-serif;font-size:13px;" +
+    "box-shadow:0 2px 12px rgba(0,0,0,.35);");
+  var btnStyle =
+    "border:1px solid #2a2f3a;background:#1d212b;color:#e8eaee;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:13px;";
+  var primary = document.createElement("button");
+  primary.textContent = "下载全部 PNG";
+  primary.setAttribute("style", btnStyle + "background:#5eead4;color:#0b1220;border-color:transparent;font-weight:600;");
+  primary.onclick = function () { window.__sentinelCapture.downloadAll(); };
+  bar.appendChild(primary);
+  var posters = document.querySelectorAll(".poster.xhs");
+  for (var j = 0; j < posters.length; j++) {
+    (function (idx) {
+      var kind = posters[idx].getAttribute("data-kind") || "poster";
+      var names = {
+        cover: "封面", data: "数据", shift: "痛点", workspace: "方法",
+        workflow: "流程", principle: "心法", division: "对比",
+        reflection: "避坑", end: "尾卡"
+      };
+      var b = document.createElement("button");
+      b.textContent = (idx + 1) + " " + (names[kind] || kind);
+      b.setAttribute("style", btnStyle);
+      b.onclick = function () { window.__sentinelCapture.download(idx, kind); };
+      bar.appendChild(b);
+    })(j);
+  }
+  document.body.appendChild(bar);
+  document.body.style.paddingTop = "72px";
+})();
+`;
 
 export const POSTER_CSS = `
   :root {
@@ -111,7 +203,7 @@ function stepsRows(steps?: Poster["steps"]): string {
     .join("")}</div>`;
 }
 
-function renderPoster(p: Poster): string {
+export function renderPoster(p: Poster): string {
   const meta = "SENTINEL · WEIPAI";
   const bodyByKind: Record<string, string> = {
     cover: `
@@ -223,10 +315,16 @@ export function buildPosterHtml(posters: Poster[], theme: ThemeManifest): string
   <div class="sheet">
     ${posters.map(renderPoster).join("\n    ")}
   </div>
+  <script>${POSTER_CAPTURE_SCRIPT}</script>
 </body>
 </html>`;
 }
 
 export function posterDocName(posters: Poster[]): string {
   return `sentinel-xhs-${posters.length}cards.html`;
+}
+
+export function posterFileName(i: number, kind?: string): string {
+  const idx = String(i + 1).padStart(2, "0");
+  return `xhs-${idx}-${kind || "poster"}.png`;
 }
