@@ -8,6 +8,7 @@ import { DEFAULT_GZH_SETTINGS, DEFAULT_ENDING, DEFAULT_IP_PROFILE, DEFAULT_XHS_P
 import { splitToPosters } from "../lib/xhsSplit";
 import { generateXhsCopy } from "../lib/xhsCopy";
 import { generateTitles } from "../lib/titles";
+import { autoStructureText, hasMarkdownStructure } from "../lib/autoStructure";
 
 const MD = `# 实测：一篇稿子两种排版
 
@@ -92,6 +93,35 @@ check("发布建议齐全", Object.values(xcopy.tips).every((v) => v.length > 0)
 const titles = generateTitles(MD);
 check("公众号标题 ≥8 个", titles.length >= 8, `len=${titles.length}`);
 check("有首选标题", titles.some((t) => t.preferred));
+
+// 小白无排版文本 → 智能结构识别
+const PLAIN = `AI工具实测：一个晚上搭好个人工作站
+最近很多人问我，不会写代码能不能用AI搭一个属于自己的个人工作站。我实测了一下，真的可以，而且一个晚上就能跑起来。
+一、先想清楚要什么
+很多人第一步就错了，直接让AI写代码。正确的做法是先写一份需求说明，把你要的功能一条条列清楚。
+第一，任务清单要能增删改。
+第二，天气和新闻要自动刷新。
+第三，记账和打卡要放在同一个页面。
+二、再拆成小步骤
+需求写清楚之后，让强模型把整个项目拆成十几个小阶段，每个阶段都能单独验收。这样做的好处是，每一步出错都能立刻发现，不用等全部做完才知道翻车。
+1. 先搭页面框架
+2. 再接入天气接口
+3. 然后做任务清单
+4. 最后联调验收
+三、便宜模型负责施工
+拆完步骤之后，让便宜模型按清单逐条施工，速度和成本都划算。实测下来，一晚上就能从零跑到能用。
+最后记住一句话：没图纸就开工，模型越勤快烂尾越快。先写四份文档，每步可验证可回退，这才是不会写代码也能用AI的正确打开方式。`;
+check("纯文本无 Markdown 结构", hasMarkdownStructure(PLAIN) === false);
+const structured = autoStructureText(PLAIN);
+check("识别出标题", structured.markdown.startsWith("# "));
+check("识别出章节 ≥3", structured.headings >= 3, `headings=${structured.headings}`);
+check("识别出要点 ≥2", structured.bullets >= 2, `bullets=${structured.bullets}`);
+check("识别出步骤 ≥2", structured.ordered >= 2, `ordered=${structured.ordered}`);
+check("识别结果含 ##", /^##\s/m.test(structured.markdown));
+check("识别结果含列表", /^\s*[-•]\s/m.test(structured.markdown) && /^\s*1\.\s/m.test(structured.markdown));
+const structuredOut = renderWechatArticle(structured.markdown, settings, theme, ip, DEFAULT_ENDING);
+check("识别后渲染合规", structuredOut.report.ok, `errors=${structuredOut.report.errors}`);
+check("识别后章节有编号", /01/.test(structuredOut.html) && /02/.test(structuredOut.html) && /03/.test(structuredOut.html));
 
 console.log(failures === 0 ? "\n全部通过 ✓" : `\n${failures} 项失败 ✗`);
 process.exit(failures === 0 ? 0 : 1);

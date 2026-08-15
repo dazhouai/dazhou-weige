@@ -8,6 +8,7 @@ import { generateXhsCopy } from "@/lib/xhsCopy";
 import { splitToPosters, reorderPosters } from "@/lib/xhsSplit";
 import { buildPosterHtml } from "@/lib/posters";
 import { getTheme } from "@/lib/themes";
+import { autoStructureText, hasMarkdownStructure } from "@/lib/autoStructure";
 
 const KIND_NAMES: Record<PosterKind, string> = {
   cover: "封面",
@@ -301,7 +302,12 @@ export default function XhsWorkspace() {
         <input ref={mdFileRef} type="file" accept=".md,.markdown,.txt" hidden onChange={async (e) => {
           const f = e.target.files?.[0];
           if (!f) return;
-          const text = await f.text();
+          let text = await f.text();
+          if (!hasMarkdownStructure(text)) {
+            const r = autoStructureText(text);
+            text = r.markdown;
+            notify(`已智能识别结构：${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`);
+          }
           setMd(text);
           setCopyDirty(false);
           regenerate(text);
@@ -313,6 +319,15 @@ export default function XhsWorkspace() {
         </button>
         {tab === "cards" && (
           <>
+            <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => {
+              const r = autoStructureText(md);
+              setMd(r.markdown);
+              setCopyDirty(false);
+              regenerate(r.markdown);
+              notify(`已智能识别结构：${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`);
+            }}>
+              智能补全结构
+            </button>
             <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => { setCopyDirty(false); setPosters(splitToPosters(md, profile)); notify("已按当前草稿重新拆文"); }}>
               重新拆文
             </button>

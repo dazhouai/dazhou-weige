@@ -12,6 +12,7 @@ import { renderWechatArticle, type GzhOutput } from "@/lib/renderGzh";
 import { generateTitles } from "@/lib/titles";
 import { compressToDataUrl, fetchAsDataUrl } from "@/lib/clientImage";
 import { extractIpThemes } from "@/lib/ipColors";
+import { autoStructureText, hasMarkdownStructure } from "@/lib/autoStructure";
 
 const DEMO_MD = `# 一篇示例，完整看懂 Sentinel微排版
 
@@ -434,8 +435,15 @@ export default function GzhWorkspace() {
 
   const importMdFile = async (f: File | undefined) => {
     if (!f) return;
-    setMd(await f.text());
-    notify(`${f.name} · 文本已载入`);
+    let text = await f.text();
+    let extra = "";
+    if (!hasMarkdownStructure(text)) {
+      const r = autoStructureText(text);
+      text = r.markdown;
+      extra = ` · 已智能识别 ${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`;
+    }
+    setMd(text);
+    notify(`${f.name} · 文本已载入${extra}`);
   };
 
   const importPackage = async (files: FileList | null) => {
@@ -462,21 +470,32 @@ export default function GzhWorkspace() {
       map[f.name] = url;
     }
     setImageMap((old) => ({ ...old, ...map }));
-    setMd(await mdFile.text());
-    notify(`${mdFile.name} · ${Object.keys(map).length} 张图片已载入`);
+    let text = await mdFile.text();
+    let extra = "";
+    if (!hasMarkdownStructure(text)) {
+      const r = autoStructureText(text);
+      text = r.markdown;
+      extra = ` · 已智能识别 ${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`;
+    }
+    setMd(text);
+    notify(`${mdFile.name} · ${Object.keys(map).length} 张图片已载入${extra}`);
   };
 
   const importRichText = async (f: File | undefined) => {
     if (f) {
       const text = await f.text();
-      setMd(new TurndownService({ headingStyle: "atx" }).turndown(text));
-      notify("富文本已转 Markdown");
+      const md = new TurndownService({ headingStyle: "atx" }).turndown(text);
+      const r = hasMarkdownStructure(md) ? md : autoStructureText(md).markdown;
+      setMd(r);
+      notify("富文本已转 Markdown" + (r !== md ? "，已智能识别结构" : ""));
       return;
     }
     try {
       const text = await navigator.clipboard.readText();
-      setMd(new TurndownService({ headingStyle: "atx" }).turndown(text));
-      notify("剪贴板富文本已转 Markdown");
+      const md = new TurndownService({ headingStyle: "atx" }).turndown(text);
+      const r = hasMarkdownStructure(md) ? md : autoStructureText(md).markdown;
+      setMd(r);
+      notify("剪贴板内容已转 Markdown" + (r !== md ? "，已智能识别结构" : ""));
     } catch {
       notify("无法读取剪贴板，请直接粘贴到左侧编辑区");
     }
@@ -488,8 +507,10 @@ export default function GzhWorkspace() {
     try {
       const arr = await f.arrayBuffer();
       const result = await mammoth.convertToHtml({ arrayBuffer: arr });
-      setMd(new TurndownService({ headingStyle: "atx" }).turndown(result.value));
-      notify("docx 已转换");
+      const md = new TurndownService({ headingStyle: "atx" }).turndown(result.value);
+      const r = hasMarkdownStructure(md) ? md : autoStructureText(md).markdown;
+      setMd(r);
+      notify("docx 已转换" + (r !== md ? "，已智能识别结构" : ""));
     } catch (e) {
       console.error(e);
       notify("docx 转换失败");
@@ -564,6 +585,12 @@ export default function GzhWorkspace() {
     notify("微信图片包已下载");
   };
 
+  const smartStructure = () => {
+    const r = autoStructureText(md);
+    setMd(r.markdown);
+    notify(`已智能识别结构：${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`);
+  };
+
   const previewClass =
     device === "mobile" ? "mx-auto w-[375px] min-h-[600px]" : device === "focus" ? "mx-auto w-[640px] min-h-[600px]" : "w-full min-h-[600px]";
 
@@ -632,6 +659,9 @@ export default function GzhWorkspace() {
         </button>
         <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={() => docxFileRef.current?.click()}>
           导入 docx
+        </button>
+        <button className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-2.5 py-1.5 text-xs" onClick={smartStructure}>
+          智能补全结构
         </button>
         <button className="rounded-sm border border-[var(--sw-danger)]/40 bg-[var(--sw-danger)]/5 px-2.5 py-1.5 text-xs text-[var(--sw-danger)]" onClick={() => setMd("")}>
           清空
