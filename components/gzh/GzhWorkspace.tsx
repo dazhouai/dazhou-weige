@@ -1,10 +1,35 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { X } from "lucide-react";
 import JSZip from "jszip";
 import mammoth from "mammoth/mammoth.browser";
 import TurndownService from "turndown";
+import Lenis from "lenis";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { NumberTicker } from "@/components/ui/number-ticker";
 import { CHAPTER_STYLES, type ChapterStyleId, type FixedEnding, type GzhSettings, type IpProfile, type RoleColors } from "@/lib/types";
 import { THEMES, getTheme } from "@/lib/themes";
 import { DEFAULT_ENDING, DEFAULT_GZH_SETTINGS, DEFAULT_IP_PROFILE, KEYS, load, save } from "@/lib/store";
@@ -122,38 +147,32 @@ function Btn({ onClick, children, primary, danger, small, disabled }: {
   disabled?: boolean;
 }) {
   return (
-    <button
+    <Button
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-sm border font-medium transition ${
-        small ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-sm"
-      } ${
-        primary
-          ? "border-transparent bg-[var(--sw-accent)] text-white hover:opacity-90"
-          : danger
-            ? "border-[var(--sw-danger)]/40 bg-[var(--sw-danger)]/5 text-[var(--sw-danger)] hover:bg-[var(--sw-danger)]/10"
-            : "border-[var(--sw-line)] bg-white text-[var(--sw-text)] hover:border-[var(--sw-text)]"
-      } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
+      variant={primary ? "default" : danger ? "destructive" : "outline"}
+      size={small ? "sm" : "default"}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
-function Panel({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+function AppDialog({ title, open, onOpenChange, children }: {
+  title: string;
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4" onClick={onClose}>
-      <div
-        className="flex max-h-[86vh] w-full max-w-2xl flex-col overflow-hidden rounded-sm border border-[var(--sw-line)] bg-white"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-[var(--sw-line)] px-4 py-3">
-          <h3 className="text-sm font-semibold">{title}</h3>
-          <button onClick={onClose} className="text-[var(--sw-muted)] hover:text-[var(--sw-text)]"><X size={14} /></button>
-        </div>
-        <div className="overflow-y-auto p-4">{children}</div>
-      </div>
-    </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="sw-folio !normal-case">{title}</DialogTitle>
+        </DialogHeader>
+        <div className="overflow-y-auto">{children}</div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -226,12 +245,14 @@ function ColorLabPanel({ settings, setSettings, ip, setIp }: {
           {ip.ipAvatar ? <img src={ip.ipAvatar} alt="IP" className="h-14 w-14 rounded-full object-cover" /> : <div className="h-14 w-14 rounded-full border border-dashed border-[var(--sw-line)]" />}
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onUpload(e.target.files?.[0])} />
           <Btn onClick={() => fileRef.current?.click()} primary small={false}>{busy ? "提色中…" : ip.ipAvatar ? "更换形象" : "上传形象"}</Btn>
-          <input
-            className="sw-input flex-1"
-            value={ip.ipName}
-            onChange={(e) => setIp({ ...ip, ipName: e.target.value })}
-            placeholder="IP 名称"
-          />
+          <Label className="flex-1">
+            <span className="sr-only">IP 名称</span>
+            <Input
+              value={ip.ipName}
+              onChange={(e) => setIp({ ...ip, ipName: e.target.value })}
+              placeholder="IP 名称"
+            />
+          </Label>
         </div>
       </div>
 
@@ -252,10 +273,14 @@ function ColorLabPanel({ settings, setSettings, ip, setIp }: {
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={settings.showSectionIp} onChange={(e) => setSettings({ ...settings, showSectionIp: e.target.checked })} className="accent-[var(--sw-accent)]" />
-        章节标题旁显示 IP 小标志
-      </label>
+      <div className="flex items-center justify-between text-sm">
+        <Label htmlFor="show-ip">章节标题旁显示 IP 小标志</Label>
+        <Switch
+          id="show-ip"
+          checked={settings.showSectionIp}
+          onCheckedChange={(v) => setSettings({ ...settings, showSectionIp: v })}
+        />
+      </div>
     </div>
   );
 }
@@ -271,20 +296,28 @@ function EndingPanel({ ending, setEnding, enabled, setEnabled }: {
       <p className="text-xs leading-5 text-[var(--sw-muted)]">
         固定结尾会继承当前文章的主题与字体，用分割线与正文隔开，并随正文一起复制到公众号。
       </p>
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} className="accent-[var(--sw-accent)]" />
-        启用固定结尾
-      </label>
-      <textarea
-        className="h-40 w-full rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3 text-sm leading-6"
+      <div className="flex items-center justify-between text-sm">
+        <Label htmlFor="ending-enabled">启用固定结尾</Label>
+        <Switch
+          id="ending-enabled"
+          checked={enabled}
+          onCheckedChange={setEnabled}
+        />
+      </div>
+      <Textarea
+        className="min-h-40"
         value={ending.text}
         onChange={(e) => setEnding({ ...ending, text: e.target.value })}
         placeholder="每一行将作为独立段落渲染…"
       />
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={ending.useAvatar} onChange={(e) => setEnding({ ...ending, useAvatar: e.target.checked })} className="accent-[var(--sw-accent)]" />
-        显示头像
-      </label>
+      <div className="flex items-center justify-between text-sm">
+        <Label htmlFor="ending-avatar">显示头像</Label>
+        <Switch
+          id="ending-avatar"
+          checked={ending.useAvatar}
+          onCheckedChange={(v) => setEnding({ ...ending, useAvatar: v })}
+        />
+      </div>
       <div className="flex gap-2">
         <Btn onClick={() => { setEnding(DEFAULT_ENDING); }}>恢复默认</Btn>
         <Btn onClick={() => { setEnding({ ...ending, text: "", useAvatar: false }); }} danger>清空设置</Btn>
@@ -303,13 +336,15 @@ function TitlePanel({ md }: { md: string }) {
         <div key={t.title} className={`flex items-center justify-between gap-3 rounded-sm border px-3 py-2.5 text-sm ${t.preferred ? "border-[var(--sw-accent)]/60 bg-[var(--sw-accent)]/10" : "border-[var(--sw-line)] bg-[var(--sw-panel-2)]"}`}>
           <span className="flex-1">
             {t.preferred ? (
-              <span className="mr-1.5 rounded-sm bg-[var(--sw-accent)] px-1 py-0.5 text-[10px] font-semibold text-white">主推</span>
+              <Badge className="mr-1.5">主推</Badge>
             ) : null}
             {t.title}
             <span className="ml-2 text-[10px] text-[var(--sw-muted)]">{t.angle}</span>
           </span>
-          <button
-            className="text-xs text-[var(--sw-accent)] hover:underline"
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-primary hover:underline"
             onClick={async () => {
               await navigator.clipboard.writeText(t.title);
               setCopied(t.title);
@@ -317,7 +352,7 @@ function TitlePanel({ md }: { md: string }) {
             }}
           >
             {copied === t.title ? "已复制" : "复制"}
-          </button>
+          </Button>
         </div>
       ))}
     </div>
@@ -376,12 +411,12 @@ export default function GzhWorkspace() {
   const [panel, setPanel] = useState<"theme" | "colorlab" | "ending" | "titles" | "compliance" | null>(null);
   const [device, setDevice] = useState<"desktop" | "focus" | "mobile">("desktop");
   const [copied, setCopied] = useState(false);
-  const [toast, setToast] = useState("");
   const [imageMap, setImageMap] = useState<Record<string, string>>({});
   const mdFileRef = useRef<HTMLInputElement>(null);
   const pkgFileRef = useRef<HTMLInputElement>(null);
   const rtFileRef = useRef<HTMLInputElement>(null);
   const docxFileRef = useRef<HTMLInputElement>(null);
+  const previewScrollRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -404,6 +439,29 @@ export default function GzhWorkspace() {
     return () => clearTimeout(t);
   }, [settings]);
 
+  useEffect(() => {
+    const el = previewScrollRef.current;
+    if (!el) return;
+    const content = el.firstElementChild as HTMLElement | null;
+    if (!content) return;
+    const lenis = new Lenis({
+      wrapper: el,
+      content,
+      duration: 1.1,
+      smoothWheel: true,
+    });
+    let raf = 0;
+    const loop = (t: number) => {
+      lenis.raf(t);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      lenis.destroy();
+    };
+  }, [device]);
+
   const theme = useMemo(() => {
     const base = getTheme(settings.themeId);
     const custom = ip.ipThemes.find((t) => t.id === settings.themeId);
@@ -424,8 +482,7 @@ export default function GzhWorkspace() {
   );
 
   const notify = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 2200);
+    toast(msg);
   };
 
   const pickTheme = (id: string) => {
@@ -603,73 +660,104 @@ export default function GzhWorkspace() {
       {/* 工具栏 */}
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--sw-line)] bg-white px-4 py-2">
         <div className="flex items-center gap-1.5">
-          <button
-            className="sw-btn flex items-center gap-2"
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
             onClick={() => setPanel(panel === "theme" ? null : "theme")}
           >
-            <span className="h-2.5 w-2.5 rounded-[1px]" style={{ background: theme.accent }} />
+            <span className="size-2.5 rounded-[2px]" style={{ background: theme.accent }} />
             主题
-          </button>
-          <button className="sw-btn" onClick={() => setPanel(panel === "colorlab" ? null : "colorlab")}>
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setPanel(panel === "colorlab" ? null : "colorlab")}>
             配色实验室
-          </button>
-          <button className="sw-btn" onClick={() => setPanel(panel === "ending" ? null : "ending")}>
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setPanel(panel === "ending" ? null : "ending")}>
             固定结尾
-          </button>
-          <button className="sw-btn" onClick={() => setPanel(panel === "titles" ? null : "titles")}>
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setPanel(panel === "titles" ? null : "titles")}>
             爆款标题
-          </button>
-          <button className="sw-btn" onClick={() => setPanel(panel === "compliance" ? null : "compliance")}>
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setPanel(panel === "compliance" ? null : "compliance")}>
             合规报告
-          </button>
+          </Button>
         </div>
-        <div className="mx-1 h-5 w-px bg-[var(--sw-line)]" />
-        <label className="flex items-center gap-1.5 text-xs text-[var(--sw-muted)]">
+        <Separator orientation="vertical" className="h-5" />
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           字号
-          <input type="range" min={14} max={20} value={settings.fontSize} onChange={(e) => setSettings({ ...settings, fontSize: Number(e.target.value) })} className="w-20 accent-[var(--sw-accent)]" />
-          <span className="w-8 text-[var(--sw-text)]">{settings.fontSize}px</span>
-        </label>
-        <label className="flex items-center gap-1.5 text-xs text-[var(--sw-muted)]">
+          <Slider
+            className="w-24"
+            min={14}
+            max={20}
+            step={1}
+            value={[settings.fontSize]}
+            onValueChange={(v) =>
+              setSettings({ ...settings, fontSize: Array.isArray(v) ? v[0] : v })
+            }
+          />
+          <span className="w-8 tabular-nums text-foreground">{settings.fontSize}px</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           行距
-          <input type="range" min={15} max={22} step={1} value={Math.round(settings.lineHeight * 10)} onChange={(e) => setSettings({ ...settings, lineHeight: Number(e.target.value) / 10 })} className="w-20 accent-[var(--sw-accent)]" />
-          <span className="w-8 text-[var(--sw-text)]">{settings.lineHeight}</span>
-        </label>
-        <select
-          className="sw-input"
+          <Slider
+            className="w-24"
+            min={15}
+            max={22}
+            step={1}
+            value={[Math.round(settings.lineHeight * 10)]}
+            onValueChange={(v) =>
+              setSettings({
+                ...settings,
+                lineHeight: (Array.isArray(v) ? v[0] : v) / 10,
+              })
+            }
+          />
+          <span className="w-8 tabular-nums text-foreground">{settings.lineHeight}</span>
+        </div>
+        <Select
           value={settings.fontFamily}
-          onChange={(e) => setSettings({ ...settings, fontFamily: e.target.value as GzhSettings["fontFamily"] })}
+          onValueChange={(v) => setSettings({ ...settings, fontFamily: v as GzhSettings["fontFamily"] })}
         >
-          <option value="sans">苹方/系统黑体</option>
-          <option value="heiti">思源黑体</option>
-        </select>
-        <select
-          className="sw-input"
+          <SelectTrigger className="h-8 w-[150px] text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="sans">苹方 / 系统黑体</SelectItem>
+            <SelectItem value="heiti">思源黑体</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
           value={settings.chapterStyle}
-          onChange={(e) => setSettings({ ...settings, chapterStyle: e.target.value as ChapterStyleId })}
+          onValueChange={(v) => setSettings({ ...settings, chapterStyle: v as ChapterStyleId })}
         >
-          {CHAPTER_STYLES.map((s) => (
-            <option key={s.id} value={s.id}>{s.mark} · {s.name}</option>
-          ))}
-        </select>
-        <div className="mx-1 h-5 w-px bg-[var(--sw-line)]" />
-        <button className="sw-btn" onClick={() => mdFileRef.current?.click()}>
+          <SelectTrigger className="h-8 w-[190px] text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {CHAPTER_STYLES.map((s) => (
+              <SelectItem key={s.id} value={s.id}>{s.mark} · {s.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Separator orientation="vertical" className="h-5" />
+        <Button variant="outline" size="sm" onClick={() => mdFileRef.current?.click()}>
           导入 MD / TXT
-        </button>
-        <button className="sw-btn" onClick={() => pkgFileRef.current?.click()}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => pkgFileRef.current?.click()}>
           导入文章包
-        </button>
-        <button className="sw-btn" onClick={() => rtFileRef.current?.click()}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => rtFileRef.current?.click()}>
           导入富文本
-        </button>
-        <button className="sw-btn" onClick={() => docxFileRef.current?.click()}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => docxFileRef.current?.click()}>
           导入 docx
-        </button>
-        <button className="sw-btn" onClick={smartStructure}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={smartStructure}>
           智能补全结构
-        </button>
-        <button className="rounded-sm border border-[var(--sw-danger)]/40 bg-[var(--sw-danger)]/5 px-2.5 py-1.5 text-xs text-[var(--sw-danger)]" onClick={() => setMd("")}>
+        </Button>
+        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setMd("")}>
           清空
-        </button>
+        </Button>
         <input ref={mdFileRef} type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden onChange={(e) => importMdFile(e.target.files?.[0])} />
         <input ref={pkgFileRef} type="file" multiple hidden webkitdirectory="" directory="" onChange={(e) => importPackage(e.target.files)} />
         <input ref={rtFileRef} type="file" accept=".html,.htm,text/html" hidden onChange={(e) => importRichText(e.target.files?.[0])} />
@@ -697,39 +785,51 @@ export default function GzhWorkspace() {
           <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-white px-4 py-2.5">
             <div className="flex items-center gap-2">
               <span className="sw-folio">02 · 预览</span>
-              <div className="flex gap-1 rounded-sm border border-[var(--sw-line)] p-0.5 text-[11px]">
-              {(["desktop", "focus", "mobile"] as const).map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setDevice(d)}
-                  className={`rounded-sm px-2 py-1 ${device === d ? "bg-[var(--sw-accent)] text-white" : "text-[var(--sw-muted)] hover:text-[var(--sw-text)]"}`}
-                >
-                  {{ desktop: "公众号", focus: "专注", mobile: "手机" }[d]}
-                </button>
-              ))}
-              </div>
+              <ToggleGroup
+                value={device ? [device] : []}
+                onValueChange={(v) => {
+                  if (v.length) setDevice(v[0] as typeof device);
+                }}
+                variant="outline"
+                size="sm"
+              >
+                <ToggleGroupItem value="desktop">公众号</ToggleGroupItem>
+                <ToggleGroupItem value="focus">专注</ToggleGroupItem>
+                <ToggleGroupItem value="mobile">手机</ToggleGroupItem>
+              </ToggleGroup>
             </div>
             <div className="flex items-center gap-2">
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={downloadWechatImages}
-                className="sw-btn"
                 title="导出本地图片为微信图片包"
               >
                 微信图片
-              </button>
-              <button
+              </Button>
+              <ShimmerButton
                 onClick={copyToWechat}
-                className={`rounded-sm px-3 py-1 text-xs font-semibold text-white ${copied ? "bg-emerald-600" : "bg-[var(--sw-accent)] hover:opacity-90"}`}
+                shimmerColor="#8ab4ff"
+                shimmerSize="0.06em"
+                borderRadius="6px"
+                background="var(--primary)"
+                className="h-8 px-4 text-xs font-semibold text-primary-foreground"
               >
                 {copied ? "已复制" : "复制到公众号"}
-              </button>
+              </ShimmerButton>
             </div>
           </div>
-          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-white px-4 py-1.5">
-            <span className="sw-folio">字数 {output.words} · 约 {output.minutes} 分钟</span>
-            <span className="sw-folio">{output.codeBlocks} 代码块 · {output.images.length} 图</span>
+          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-white px-4 py-2">
+            <span className="sw-folio">
+              字数 <NumberTicker value={output.words} className="tabular-nums text-foreground" /> · 约{" "}
+              <NumberTicker value={output.minutes} className="tabular-nums text-foreground" /> 分钟
+            </span>
+            <span className="sw-folio">
+              <NumberTicker value={output.codeBlocks} className="tabular-nums text-foreground" /> 代码块 ·{" "}
+              <NumberTicker value={output.images.length} className="tabular-nums text-foreground" /> 图
+            </span>
           </div>
-          <div className="flex-1 overflow-y-auto p-5">
+          <div ref={previewScrollRef} className="min-h-0 flex-1 overflow-y-auto p-5">
             <section id="gzh-preview" className={`wechat-preview rounded-sm ${previewClass}`} style={{ padding: "28px 20px" }}>
               <section dangerouslySetInnerHTML={{ __html: output.html }} />
             </section>
@@ -738,35 +838,29 @@ export default function GzhWorkspace() {
       </div>
 
       {panel === "theme" && (
-        <Panel title="选择主题" onClose={() => setPanel(null)}>
+        <AppDialog title="01 · 选择主题" open={panel === "theme"} onOpenChange={(v) => !v && setPanel(null)}>
           <ThemePanel settings={settings} ip={ip} onPick={pickTheme} />
-        </Panel>
+        </AppDialog>
       )}
       {panel === "colorlab" && (
-        <Panel title="配色实验室" onClose={() => setPanel(null)}>
+        <AppDialog title="02 · 配色实验室" open={panel === "colorlab"} onOpenChange={(v) => !v && setPanel(null)}>
           <ColorLabPanel settings={settings} setSettings={setSettings} ip={ip} setIp={(p) => { setIp(p); save(KEYS.ipProfile, p); }} />
-        </Panel>
+        </AppDialog>
       )}
       {panel === "ending" && (
-        <Panel title="固定结尾" onClose={() => setPanel(null)}>
+        <AppDialog title="03 · 固定结尾" open={panel === "ending"} onOpenChange={(v) => !v && setPanel(null)}>
           <EndingPanel ending={ending} setEnding={(e) => { setEnding(e); save(KEYS.gzhEnding, e); }} enabled={settings.endingEnabled} setEnabled={(v) => setSettings({ ...settings, endingEnabled: v })} />
-        </Panel>
+        </AppDialog>
       )}
       {panel === "titles" && (
-        <Panel title="爆款标题（本地生成）" onClose={() => setPanel(null)}>
+        <AppDialog title="04 · 爆款标题" open={panel === "titles"} onOpenChange={(v) => !v && setPanel(null)}>
           <TitlePanel md={md} />
-        </Panel>
+        </AppDialog>
       )}
       {panel === "compliance" && (
-        <Panel title="合规报告" onClose={() => setPanel(null)}>
+        <AppDialog title="05 · 合规报告" open={panel === "compliance"} onOpenChange={(v) => !v && setPanel(null)}>
           <CompliancePanel output={output} />
-        </Panel>
-      )}
-
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-sm border border-[var(--sw-line)] bg-white px-4 py-2 text-sm text-[var(--sw-text)] shadow-md">
-          {toast}
-        </div>
+        </AppDialog>
       )}
     </div>
   );

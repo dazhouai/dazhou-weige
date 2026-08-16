@@ -2,6 +2,16 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import type { Poster, PosterKind, XhsCopy, XhsProfile } from "@/lib/types";
 import { DEFAULT_POSTERS, DEFAULT_XHS_COPY, DEFAULT_XHS_PROFILE, KEYS, load, save } from "@/lib/store";
 import { generateXhsCopy } from "@/lib/xhsCopy";
@@ -65,15 +75,15 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
       <div>
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">标题候选（≤20 字）</h3>
-          <button className="text-xs text-[var(--sw-accent)] hover:underline" onClick={() => copyText("titles", copy.titles.join("\n"))}>
+          <Button variant="ghost" size="sm" className="text-xs text-primary" onClick={() => copyText("titles", copy.titles.join("\n"))}>
             {copied === "titles" ? "已复制" : "复制全部"}
-          </button>
+          </Button>
         </div>
         <div className="space-y-1.5">
           {copy.titles.map((t, i) => (
             <div key={i} className="flex items-center gap-2">
-              <input
-                className="sw-input flex-1"
+              <Input
+                className="flex-1"
                 value={t}
                 onChange={(e) => {
                   const titles = [...copy.titles];
@@ -81,10 +91,10 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
                   setCopy({ ...copy, titles, preferredTitle: i === 0 ? e.target.value : copy.preferredTitle });
                 }}
               />
-              {i === 0 && <span className="rounded-sm bg-[var(--sw-accent)] px-1.5 py-0.5 text-[10px] font-semibold text-white">主推</span>}
-              <button className="text-xs text-[var(--sw-accent)] hover:underline" onClick={() => copyText(`t${i}`, t)}>
+              {i === 0 && <Badge>主推</Badge>}
+              <Button variant="ghost" size="sm" className="text-xs text-primary" onClick={() => copyText(`t${i}`, t)}>
                 {copied === `t${i}` ? "✓" : "复制"}
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -93,12 +103,12 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
       <div>
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">正文（小红书口语体）</h3>
-          <button className="text-xs text-[var(--sw-accent)] hover:underline" onClick={() => copyText("body", copy.body)}>
+          <Button variant="ghost" size="sm" className="text-xs text-primary" onClick={() => copyText("body", copy.body)}>
             {copied === "body" ? "已复制" : "复制正文"}
-          </button>
+          </Button>
         </div>
-        <textarea
-          className="sw-input h-72 w-full leading-6"
+        <Textarea
+          className="min-h-72 leading-6"
           value={copy.body}
           onChange={(e) => setCopy({ ...copy, body: e.target.value })}
         />
@@ -107,9 +117,9 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
       <div>
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">话题标签（8–10 个）</h3>
-          <button className="text-xs text-[var(--sw-accent)] hover:underline" onClick={() => copyText("tags", copy.tags.join(" "))}>
+          <Button variant="ghost" size="sm" className="text-xs text-primary" onClick={() => copyText("tags", copy.tags.join(" "))}>
             {copied === "tags" ? "已复制" : "复制标签"}
-          </button>
+          </Button>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {copy.tags.map((t, i) => (
@@ -156,44 +166,42 @@ function CopyPanel({ copy, setCopy }: { copy: XhsCopy; setCopy: (c: XhsCopy) => 
 function PosterEditor({ poster, onChange }: { poster: Poster; onChange: (p: Poster) => void }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)]">
-      <button className="flex w-full items-center justify-between px-3 py-2.5 text-left" onClick={() => setExpanded(!expanded)}>
+    <Card>
+      <button className={cn("flex w-full items-center justify-between px-4 py-3 text-left")} onClick={() => setExpanded(!expanded)}>
         <span className="flex items-center gap-2 text-sm">
-          <span className="rounded bg-[var(--sw-accent)]/15 px-1.5 py-0.5 text-[10px] font-bold text-[var(--sw-accent)]">
-            {KIND_NAMES[poster.kind]}
-          </span>
+          <Badge variant="secondary">{KIND_NAMES[poster.kind]}</Badge>
           <span className="font-medium">{poster.title || "（未填标题）"}</span>
         </span>
         <span className="text-xs text-[var(--sw-muted)]">{expanded ? "收起" : "编辑"}</span>
       </button>
       {expanded && (
-        <div className="space-y-2 border-t border-[var(--sw-line)] p-3">
-          <input className="sw-input w-full" value={poster.title} placeholder="标题" onChange={(e) => onChange({ ...poster, title: e.target.value })} />
+        <CardContent className="space-y-2 border-t border-border pt-3">
+          <Input className="w-full" value={poster.title} placeholder="标题" onChange={(e) => onChange({ ...poster, title: e.target.value })} />
           {(poster.kind === "cover" || poster.kind === "data" || poster.kind === "shift" || poster.kind === "workspace" || poster.kind === "principle" || poster.kind === "reflection") && (
-            <textarea className="sw-input h-24 w-full" value={poster.lines.join("\n")} placeholder="每行一条内容" onChange={(e) => onChange({ ...poster, lines: e.target.value.split("\n") })} />
+            <Textarea className="h-24 w-full" value={poster.lines.join("\n")} placeholder="每行一条内容" onChange={(e) => onChange({ ...poster, lines: e.target.value.split("\n") })} />
           )}
           {(poster.kind === "workflow") && (
-            <textarea className="sw-input h-24 w-full" value={(poster.steps || []).map((s) => s.text).join("\n")} placeholder="每行一步" onChange={(e) => onChange({ ...poster, steps: e.target.value.split("\n").filter(Boolean).map((text, i) => ({ num: String(i + 1), text })) })} />
+            <Textarea className="h-24 w-full" value={(poster.steps || []).map((s) => s.text).join("\n")} placeholder="每行一步" onChange={(e) => onChange({ ...poster, steps: e.target.value.split("\n").filter(Boolean).map((text, i) => ({ num: String(i + 1), text })) })} />
           )}
           {(poster.kind === "division") && (
-            <textarea className="sw-input h-20 w-full" value={(poster.comparison || []).join("\n")} placeholder="第一行：没做…；第二行：做了…" onChange={(e) => onChange({ ...poster, comparison: e.target.value.split("\n").filter(Boolean) })} />
+            <Textarea className="h-20 w-full" value={(poster.comparison || []).join("\n")} placeholder="第一行：没做…；第二行：做了…" onChange={(e) => onChange({ ...poster, comparison: e.target.value.split("\n").filter(Boolean) })} />
           )}
           {(poster.kind === "end") && (
             <>
-              <textarea className="sw-input h-20 w-full" value={(poster.fitItems || []).join("\n")} placeholder="适合谁（每行一条）" onChange={(e) => onChange({ ...poster, fitItems: e.target.value.split("\n").filter(Boolean) })} />
-              <input className="sw-input w-full" value={poster.notFitItem || ""} placeholder="不适合谁" onChange={(e) => onChange({ ...poster, notFitItem: e.target.value })} />
-              <textarea className="sw-input h-16 w-full" value={(poster.ctaItems || []).join("\n")} placeholder="CTA（每行一条）" onChange={(e) => onChange({ ...poster, ctaItems: e.target.value.split("\n").filter(Boolean) })} />
+              <Textarea className="h-20 w-full" value={(poster.fitItems || []).join("\n")} placeholder="适合谁（每行一条）" onChange={(e) => onChange({ ...poster, fitItems: e.target.value.split("\n").filter(Boolean) })} />
+              <Input className="w-full" value={poster.notFitItem || ""} placeholder="不适合谁" onChange={(e) => onChange({ ...poster, notFitItem: e.target.value })} />
+              <Textarea className="h-16 w-full" value={(poster.ctaItems || []).join("\n")} placeholder="CTA（每行一条）" onChange={(e) => onChange({ ...poster, ctaItems: e.target.value.split("\n").filter(Boolean) })} />
             </>
           )}
           <div className="flex gap-2">
-            <input className="sw-input flex-1" value={poster.footer || ""} placeholder="页脚（默认 @账号）" onChange={(e) => onChange({ ...poster, footer: e.target.value })} />
-            <button className="rounded-sm border border-[var(--sw-line)] px-2 py-1 text-xs text-[var(--sw-muted)]" onClick={() => onChange({ ...poster, footer: undefined })}>
+            <Input className="flex-1" value={poster.footer || ""} placeholder="页脚（默认 @账号）" onChange={(e) => onChange({ ...poster, footer: e.target.value })} />
+            <Button variant="outline" size="sm" onClick={() => onChange({ ...poster, footer: undefined })}>
               默认页脚
-            </button>
+            </Button>
           </div>
-        </div>
+        </CardContent>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -205,7 +213,6 @@ export default function XhsWorkspace() {
   const [profile, setProfile] = useState<XhsProfile>(DEFAULT_XHS_PROFILE);
   const [copyDirty, setCopyDirty] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [toast, setToast] = useState("");
   const mdFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -251,8 +258,7 @@ export default function XhsWorkspace() {
   }, [md]);
 
   const notify = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 2200);
+    toast(msg);
   };
 
   const importGzhDraft = () => {
@@ -286,19 +292,18 @@ export default function XhsWorkspace() {
   return (
     <div className="flex h-[calc(100vh-56px)] flex-col">
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--sw-line)] bg-[var(--sw-panel)] px-3 py-2">
-        <div className="flex gap-1 rounded-sm border border-[var(--sw-line)] p-0.5 text-sm">
-          {(["copy", "cards"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} className={`rounded-sm px-3 py-1.5 ${tab === t ? "bg-[var(--sw-accent)] text-white" : "text-[var(--sw-muted)] hover:text-[var(--sw-text)]"}`}>
-              {t === "copy" ? "文案" : "图文卡片"}
-            </button>
-          ))}
-        </div>
-        <button className="sw-btn" onClick={importGzhDraft}>
+        <Tabs value={tab} onValueChange={(v) => setTab(v as "copy" | "cards")}>
+          <TabsList>
+            <TabsTrigger value="copy">文案</TabsTrigger>
+            <TabsTrigger value="cards">图文卡片</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <Button variant="outline" size="sm" onClick={importGzhDraft}>
           从公众号草稿导入
-        </button>
-        <button className="sw-btn" onClick={() => mdFileRef.current?.click()}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => mdFileRef.current?.click()}>
           导入 MD / TXT
-        </button>
+        </Button>
         <input ref={mdFileRef} type="file" accept=".md,.markdown,.txt" hidden onChange={async (e) => {
           const f = e.target.files?.[0];
           if (!f) return;
@@ -313,13 +318,13 @@ export default function XhsWorkspace() {
           regenerate(text);
           notify(`${f.name} · 已载入并重新拆文`);
         }} />
-        <div className="mx-1 h-5 w-px bg-[var(--sw-line)]" />
-        <button className="sw-btn" onClick={() => setShowSettings(!showSettings)}>
+        <Separator orientation="vertical" className="h-5" />
+        <Button variant="outline" size="sm" onClick={() => setShowSettings(!showSettings)}>
           账号设置
-        </button>
+        </Button>
         {tab === "cards" && (
           <>
-            <button className="sw-btn" onClick={() => {
+            <Button variant="outline" size="sm" onClick={() => {
               const r = autoStructureText(md);
               setMd(r.markdown);
               setCopyDirty(false);
@@ -327,13 +332,13 @@ export default function XhsWorkspace() {
               notify(`已智能识别结构：${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`);
             }}>
               智能补全结构
-            </button>
-            <button className="sw-btn" onClick={() => { setCopyDirty(false); setPosters(splitToPosters(md, profile)); notify("已按当前草稿重新拆文"); }}>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => { setCopyDirty(false); setPosters(splitToPosters(md, profile)); notify("已按当前草稿重新拆文"); }}>
               重新拆文
-            </button>
-            <button className="sw-btn" onClick={() => window.open("/xhs/export/", "_blank")}>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => window.open("/xhs/export/", "_blank")}>
               打开导出预览
-            </button>
+            </Button>
             <Btn primary small onClick={downloadPosterHtml}>
               下载海报 HTML
             </Btn>
@@ -344,22 +349,22 @@ export default function XhsWorkspace() {
       {showSettings && (
         <div className="border-b border-[var(--sw-line)] bg-[var(--sw-panel)] px-4 py-3">
           <div className="grid gap-3 sm:grid-cols-3">
-            <label className="text-xs text-[var(--sw-muted)]">
+            <Label className="text-xs text-muted-foreground">
               账号
               <input className="sw-input mt-1 w-full" value={profile.account} onChange={(e) => { const p = { ...profile, account: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
-            </label>
-            <label className="text-xs text-[var(--sw-muted)]">
+            </Label>
+            <Label className="text-xs text-muted-foreground">
               主题
               <select className="sw-input mt-1 w-full" value={profile.themeId} onChange={(e) => { const p = { ...profile, themeId: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }}>
                 {["moyu-green", "red-white", "graphite-minimal", "zen-whitespace", "moyu-ticket", "olive-journal", "sentinel-dark"].map((id) => (
                   <option key={id} value={id}>{getTheme(id).name}</option>
                 ))}
               </select>
-            </label>
-            <label className="text-xs text-[var(--sw-muted)]">
+            </Label>
+            <Label className="text-xs text-muted-foreground">
               落款语
               <input className="sw-input mt-1 w-full" value={profile.slogan} onChange={(e) => { const p = { ...profile, slogan: e.target.value }; setProfile(p); save(KEYS.xhsProfile, p); }} />
-            </label>
+            </Label>
           </div>
         </div>
       )}
@@ -417,11 +422,6 @@ export default function XhsWorkspace() {
         </div>
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-sm border border-[var(--sw-line)] bg-white px-4 py-2 text-sm text-[var(--sw-text)] shadow-md">
-          {toast}
-        </div>
-      )}
     </div>
   );
 }
