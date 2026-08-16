@@ -8,7 +8,7 @@
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000/
+npm run dev -- -p 3001   # http://localhost:3001/（本机 3000 常被其他服务占用，用 3001 更稳）
 ```
 
 - `/`：公众号排版工作台（主题 / 配色实验室 / 章节样式 / 固定结尾 / 合规校验 / 一键复制）
