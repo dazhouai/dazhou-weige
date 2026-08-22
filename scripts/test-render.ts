@@ -10,7 +10,7 @@ import { autoStructureText, hasMarkdownStructure } from "../lib/autoStructure";
 
 const MD = `# 实测：一篇稿子两种排版
 
-这是开头引言：**排版不是化妆**，而是帮内容建立节奏。今天用一篇稿子，同时演示公众号和小红书两种出口。
+这是开头引言：**排版不是化妆**，而是帮内容建立节奏。今天用一篇稿子，演示公众号排版的全部能力。
 
 ## 先把结构搭清楚
 

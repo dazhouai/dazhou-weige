@@ -320,6 +320,8 @@ export default function GzhWorkspace() {
   const [ending, setEnding] = useState<FixedEnding>(DEFAULT_ENDING);
   const [panel, setPanel] = useState<"theme" | "colorlab" | "ending" | null>(null);
   const [device, setDevice] = useState<"mobile">("mobile");
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileView, setMobileView] = useState<"editor" | "preview">("editor");
   const [copied, setCopied] = useState(false);
   const [imageMap] = useState<Record<string, string>>({});
   const mdFileRef = useRef<HTMLInputElement>(null);
@@ -482,6 +484,19 @@ export default function GzhWorkspace() {
 
   const previewClass = "mx-auto w-full max-w-[720px] min-h-[600px]";
 
+  // 移动端检测（<lg = 1024px）
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    let t: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (t) clearTimeout(t);
+      t = setTimeout(check, 150);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 lg:p-6">
       {/* 工具栏 */}
@@ -583,9 +598,29 @@ export default function GzhWorkspace() {
         <input ref={docxFileRef} type="file" accept=".docx" hidden onChange={(e) => importDocx(e.target.files?.[0])} />
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-hidden lg:grid-cols-2">
+      {/* 移动端 Tab 切换器 */}
+      {isMobile && (
+        <div className="flex shrink-0 gap-1 rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel)] p-1 shadow-[var(--sw-shadow)]">
+          <button
+            type="button"
+            onClick={() => setMobileView("editor")}
+            className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${mobileView === "editor" ? "bg-[var(--sw-accent)] text-white shadow-sm" : "text-[var(--sw-muted)]"}`}
+          >
+            ✏️ 编辑
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileView("preview")}
+            className={`flex-1 rounded px-4 py-2 text-sm font-medium transition-colors ${mobileView === "preview" ? "bg-[var(--sw-accent)] text-white shadow-sm" : "text-[var(--sw-muted)]"}`}
+          >
+            👁 预览
+          </button>
+        </div>
+      )}
+
+      <div className={`grid min-h-0 flex-1 gap-4 ${isMobile ? "grid-cols-1 overflow-visible" : "grid-cols-1 overflow-hidden lg:grid-cols-2"}`}>
         {/* 左：编辑器 */}
-        <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel)] shadow-[var(--sw-shadow)]">
+        <div className={`flex min-h-0 flex-col overflow-hidden rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel)] shadow-[var(--sw-shadow)] ${isMobile ? "min-h-[60vh]" : ""} ${isMobile && mobileView !== "editor" ? "hidden" : ""}`}>
           <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-6 py-2.5">
             <span className="sw-folio">01 · 原稿<span className="ml-2 font-normal normal-case tracking-normal text-[var(--sw-muted)]">MARKDOWN / TXT</span></span>
             <span className="text-[11px] text-[var(--sw-muted)]">{busy ? "转换中…" : "已自动保存"}</span>
@@ -600,7 +635,7 @@ export default function GzhWorkspace() {
         </div>
 
         {/* 右：预览 */}
-        <div className="sw-desk flex min-h-0 flex-col overflow-hidden rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-3)] shadow-[var(--sw-shadow)]">
+        <div className={`sw-desk flex min-h-0 flex-col overflow-hidden rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-3)] shadow-[var(--sw-shadow)] ${isMobile ? "min-h-[60vh]" : ""} ${isMobile && mobileView !== "preview" ? "hidden" : ""}`}>
           <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-[var(--sw-panel)] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <span className="sw-folio">02 · 预览</span>

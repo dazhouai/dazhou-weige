@@ -37,9 +37,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body className="flex h-screen flex-col antialiased overflow-hidden">
+      <body className="flex min-h-screen flex-col antialiased lg:h-screen lg:overflow-hidden">
         <AppShell />
-        <main className="flex min-h-0 flex-1 overflow-hidden flex-col">{children}</main>
+        <main className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">{children}</main>
         <Footer />
         <Toaster theme="light" position="bottom-center" />
       </body>

@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "xhs:cards": "node scripts/render-xhs-cards.mjs",
     "test:render": "tsx scripts/test-render.ts"
   },
   "dependencies": {
