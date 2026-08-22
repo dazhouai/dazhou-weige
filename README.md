@@ -1,6 +1,6 @@
 <div align="center">
 
-# 大洲微格 · 公众号智能排版工作台
+# 🚀 大洲微格 · 公众号智能排版工作台
 
 **把排版交给工具，把时间留给内容。**
 
@@ -8,11 +8,21 @@
 
 纯前端 · 无后端 · 无登录 · 数据只在你的浏览器里
 
-[在线体验](https://9fee80468a864a328d35fd11a15d70cb.app.workbuddy.link) · [使用教程](#快速开始) · [设计说明](#设计说明)
+---
 
-</div>
+## 🎯 在线体验（点击直达，完全免费）
+
+### [👉 **立即开始排版 →**](https://9fee80468a864a328d35fd11a15d70cb.app.workbuddy.link)
+
+**不注册 · 不登录 · 不上传 · 打开即用**
 
 ---
+
+![大洲微格 界面预览](docs/preview.png)
+
+---
+
+</div>
 
 ## ✨ 为什么用它
 
@@ -66,6 +76,13 @@ npm run build
 ```
 
 把 `out/` 部署到任意静态托管（Vercel / Netlify / GitHub Pages / CloudStudio 均可）。
+
+## 🤖 作为 AI Skill 使用
+
+仓库内置 [`SKILL.md`](SKILL.md)，Claude / Codex / WorkBuddy 等智能体可直接调用完成公众号排版，支持两种方式：
+
+1. **浏览器可视化**：`npm run dev -- -p 3001`，用户三步排版
+2. **程序化调用**：`renderWechatArticle(md, settings, theme, ip, ending)` 直接产出合规 HTML
 
 ## 📄 License
 
