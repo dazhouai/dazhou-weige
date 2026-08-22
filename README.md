@@ -12,7 +12,7 @@
 
 ## 🎯 在线体验（点击直达，完全免费）
 
-### [👉 **立即开始排版 →**](https://9fee80468a864a328d35fd11a15d70cb.app.workbuddy.link)
+### [👉 **立即开始排版 →**](https://3c6479f147ae4be8b09330aaa342bb10.app.workbuddy.link)
 
 **不注册 · 不登录 · 不上传 · 打开即用**
 
