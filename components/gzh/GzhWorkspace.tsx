@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import JSZip from "jszip";
 import mammoth from "mammoth/mammoth.browser";
 import TurndownService from "turndown";
 import Lenis from "lenis";
@@ -24,7 +23,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -33,83 +31,69 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 import { CHAPTER_STYLES, type ChapterStyleId, type FixedEnding, type GzhSettings, type IpProfile, type RoleColors } from "@/lib/types";
 import { THEMES, getTheme } from "@/lib/themes";
 import { DEFAULT_ENDING, DEFAULT_GZH_SETTINGS, DEFAULT_IP_PROFILE, KEYS, load, save } from "@/lib/store";
-import { renderWechatArticle, type GzhOutput } from "@/lib/renderGzh";
-import { generateTitles } from "@/lib/titles";
+import { renderWechatArticle } from "@/lib/renderGzh";
 import { compressToDataUrl, fetchAsDataUrl } from "@/lib/clientImage";
 import { extractIpThemes } from "@/lib/ipColors";
 import { autoStructureText, hasMarkdownStructure } from "@/lib/autoStructure";
 
-const DEMO_MD = `# 一篇示例，完整看懂 Sentinel微排版
+const DEMO_MD = `# 我为什么要做「大洲微格-公众号智能排版工作台」，以及它到底怎么用
 
-这不是一篇普通占位稿，而是一份可以直接检查排版能力的**全功能示例**。你会依次看到章节、二级标题、列表、引用、图片、行内代码、表格与代码块。正文默认保持舒展的阅读节奏，工具栏里可以切换字号、行距、字体和正文颜色，也可以选中预览里的文字单独强调。
+自己开始做公众号后发现最大的痛点是：排版太复杂太慢！AI时代写稿已经变得简单，做过的朋友都知道一句话：写稿很快，但排版半小时，改版又半小时。这篇稿子不聊虚的，就讲两件事——这个项目是怎么来的，以及你拿到手之后 3 分钟怎么用它。
 
-## 先把文章结构搭清楚
+## 先说我为什么要做这个项目
 
-### 普通二级标题
+### 排版，是公众号最大的内耗
 
-二级标题会自动加粗，并在左侧使用一条主题色竖线。它负责提示“这一小节在讲什么”。
+公众号编辑器没有像样的样式系统：标题要手动加粗、引用要手动调色、代码块粘进去就变形。更麻烦的是微信有一堆**红线规则**——不能用 div、不能用 class、不能有外部样式，样式不对整篇就乱码。
 
-### 分论点示例
+### 市面上的工具，差在哪
 
-标题：帮助读者快速判断这一节是否值得继续读；
-引用：让一句重要判断拥有停顿和呼吸；
-列表：把并列信息整理成清楚的阅读路径。
+- 在线排版网站：要注册、要会员，稿子还要过别人的服务器；
+- 手动排版：费时费力，改一次翻车一次；
+- 现成模板：好看但千篇一律，换个配色就得重做。
 
-### 多级嵌套列表示例
+### 大洲微格的三个原则
 
-- 一段只表达一个核心意思
-- 重要结论适度加粗
-  - 只加粗**关键词**，不要整段加粗
-  - 一段最多突出一到两个重点
-- 图片前后留白
-  1. 图片前先说明它解决什么问题
-  2. 图片后补充一句结论或观察
-
-### 引用示例
+1. **纯本地**：不注册、不登录、不联网，稿子只存在你自己浏览器里；
+2. **合规优先**：输出的就是微信平台认可的 HTML，粘贴即用；
+3. **智能兜底**：不接大模型，纯本地规则也能自动编号、自动划重点、自动出标题。
 
 > 排版不是替内容化妆，而是帮助内容建立节奏，让读者知道哪里需要快读，哪里值得停一下。
 
-## 让图片、序号与代码各司其职
+## 具体怎么用：三步搞定一篇稿子
 
-### 1. 有序分论点示例
+### 第一步：把稿子扔进来
 
-1. 粘贴 Markdown，或导入文章包与本地图片。
-2. 在配色实验室里选主题，再设置章节样式。
-3. 检查预览与合规报告，一键复制到公众号。
+把 Markdown 直接粘贴到左侧编辑区，或者点「导入 MD / TXT」选择本地文件。哪怕你只有一段**没排版的纯文本**也没关系，点「智能补全结构」，它会自动帮你理出标题和章节：
 
-### 2. 行内代码与链接
+- 自动识别一级、二级标题层级
+- 自动把长段落拆成要点列表
+- 自动把流程性内容转成有序步骤
 
-文件名、命令或字段可以写成行内代码，例如 \`publish-copy.md\`。需要补充来源时，也可以插入[文字链接](https://mp.weixin.qq.com/)；已经失效的内容还可以使用 ~~删除线~~ 标记。
+### 第二步：选主题，调到你顺眼
 
-### 3. 代码块示例
+点工具栏的「主题」，7 套风格随便换：摸鱼绿、石墨极简、留白禅意……每套都带完整的配色和字号。想更有个性，去「配色实验室」上传你的 IP 形象图，它会自动提色生成 3 套专属配色。
 
-\`\`\`bash
-npm run dev
-npm run xhs:cards
+需要调节奏的地方，工具栏直接拖：
+
+| 调节项 | 作用 |
+|---|---|
+| 字号 / 行距 | 控制阅读节奏 |
+| 章节样式 | 9 种标题装饰任选 |
+| 固定结尾 | 签名档一键复用 |
+| 爆款标题 | 一键生成 10 个标题候选 |
+
+### 第三步：看合规报告，一键复制
+
+点「合规报告」，确认全绿（无禁用标签、无半角标点、leaf 包裹无遗漏），然后点右上角的「复制到公众号」：
+
+\`\`\`text
+复制到公众号 → 打开微信编辑器 → Cmd/Ctrl + V → 发布
 \`\`\`
 
-\`\`\`javascript
-const article = {
-  title: "我的公众号文章",
-  status: "ready",
-  publish() {
-    return "复制到公众号";
-  }
-};
-\`\`\`
+就这么简单。以前要折腾半小时的排版，现在**3 分钟**走完全流程。
 
-## 用表格和检查清单收尾
-
-### 表格示例
-
-| 排版元素 | 适合表达 | 默认视觉 |
-|---|---|---|
-| 引用 | 金句、定义 | 主题色竖线与浅色背景 |
-| 列表 | 步骤、要点 | 主题色序号或实心点 |
-| 行内代码 | 文件名、命令 | 高对比文字与浅色涂层 |
-| 代码块 | 程序、流程 | 深色窗口与主题色底 |
-
-### 发布前检查
+## 发布前最后检查一遍
 
 - 标题、章节和二级标题层级是否正确
 - 图片是否完整显示，前后是否留有说明
@@ -118,7 +102,7 @@ const article = {
 
 ---
 
-最后，点击预览栏里的「复制到公众号」，再粘贴到微信公众号编辑器中。现在你看到的，才是一份真正覆盖 Sentinel微排主要能力的示例。
+如果你今天只记住一句话：把排版交给工具，把时间留给内容。我是大洲，关注我，学习AI的实际应用。
 
 ## 结语：让排版回归内容
 
@@ -137,6 +121,9 @@ const ROLE_LABELS: [keyof RoleColors, string][] = [
   ["inlineShadow", "行内底色"],
   ["quote", "引用"],
 ];
+
+/** DEMO 稿版本号：升级示例稿时 +1，强制覆盖本地旧缓存 */
+const DEMO_VERSION = "v4";
 
 function Btn({ onClick, children, primary, danger, small, disabled }: {
   onClick?: () => void;
@@ -326,102 +313,26 @@ function EndingPanel({ ending, setEnding, enabled, setEnabled }: {
   );
 }
 
-function TitlePanel({ md }: { md: string }) {
-  const titles = useMemo(() => generateTitles(md), [md]);
-  const [copied, setCopied] = useState("");
-  return (
-    <div className="space-y-2">
-      <p className="text-xs leading-5 text-[var(--sw-muted)]">本地规则生成，覆盖 4 个角度；首选标题带「主推」标记。</p>
-      {titles.map((t) => (
-        <div key={t.title} className={`flex items-center justify-between gap-3 rounded-sm border px-3 py-2.5 text-sm ${t.preferred ? "border-[var(--sw-accent)]/60 bg-[var(--sw-accent)]/10" : "border-[var(--sw-line)] bg-[var(--sw-panel-2)]"}`}>
-          <span className="flex-1">
-            {t.preferred ? (
-              <Badge className="mr-1.5">主推</Badge>
-            ) : null}
-            {t.title}
-            <span className="ml-2 text-[10px] text-[var(--sw-muted)]">{t.angle}</span>
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs text-primary hover:underline"
-            onClick={async () => {
-              await navigator.clipboard.writeText(t.title);
-              setCopied(t.title);
-              setTimeout(() => setCopied(""), 1200);
-            }}
-          >
-            {copied === t.title ? "已复制" : "复制"}
-          </Button>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function CompliancePanel({ output }: { output: GzhOutput }) {
-  const r = output.report;
-  return (
-    <div className="space-y-3 text-sm">
-      <div className={`flex items-center gap-2 rounded-sm px-3 py-2.5 text-sm font-semibold ${r.ok ? "bg-emerald-500/10 text-emerald-700" : "bg-red-500/10 text-red-700"}`}>
-        {r.ok ? "✓ 校验通过，可以安全复制" : `✗ 还有 ${r.errors} 处需要处理`}
-      </div>
-      <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
-          <div className="font-semibold text-[var(--sw-muted)]">leaf 包裹</div>
-          <div className="mt-1 text-lg font-bold">{r.leafIssues === 0 ? "0 遗漏" : `${r.leafIssues} 处`}</div>
-        </div>
-        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
-          <div className="font-semibold text-[var(--sw-muted)]">禁用标签/样式</div>
-          <div className="mt-1 text-lg font-bold">{r.forbiddenTags.length + r.forbiddenCss.length === 0 ? "0 项" : `${r.forbiddenTags.length + r.forbiddenCss.length} 项`}</div>
-        </div>
-        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
-          <div className="font-semibold text-[var(--sw-muted)]">半角标点</div>
-          <div className="mt-1 text-lg font-bold">{r.punctuationIssues.length === 0 ? "0 处" : `${r.punctuationIssues.length} 处`}</div>
-        </div>
-        <div className="rounded-sm border border-[var(--sw-line)] bg-[var(--sw-panel-2)] p-3">
-          <div className="font-semibold text-[var(--sw-muted)]">图片</div>
-          <div className="mt-1 text-lg font-bold">
-            {r.images.total === 0 ? "无" : `${r.images.embedded}/${r.images.total} 已内嵌`}
-          </div>
-        </div>
-      </div>
-      {(r.forbiddenTags.length > 0 || r.forbiddenCss.length > 0) && (
-        <div className="rounded-sm bg-red-500/10 p-3 text-xs text-red-700">
-          发现：{[...r.forbiddenTags, ...r.forbiddenCss].join("、")}
-        </div>
-      )}
-      {r.punctuationIssues.length > 0 && (
-        <div className="rounded-sm bg-amber-500/10 p-3 text-xs text-amber-700">
-          半角标点位置：{r.punctuationIssues.slice(0, 5).map((p) => `「${p.text}」`).join(" ")}
-        </div>
-      )}
-      <div className="text-xs leading-5 text-[var(--sw-muted)]">
-        统计：{output.words} 字 · 约 {output.minutes} 分钟阅读 · {output.codeBlocks} 个代码块 · {output.images.length} 张图
-      </div>
-    </div>
-  );
-}
-
 export default function GzhWorkspace() {
   const [md, setMd] = useState("");
   const [settings, setSettings] = useState<GzhSettings>(DEFAULT_GZH_SETTINGS);
   const [ip, setIp] = useState<IpProfile>(DEFAULT_IP_PROFILE);
   const [ending, setEnding] = useState<FixedEnding>(DEFAULT_ENDING);
-  const [panel, setPanel] = useState<"theme" | "colorlab" | "ending" | "titles" | "compliance" | null>(null);
-  const [device, setDevice] = useState<"desktop" | "focus" | "mobile">("desktop");
+  const [panel, setPanel] = useState<"theme" | "colorlab" | "ending" | null>(null);
+  const [device, setDevice] = useState<"mobile">("mobile");
   const [copied, setCopied] = useState(false);
-  const [imageMap, setImageMap] = useState<Record<string, string>>({});
+  const [imageMap] = useState<Record<string, string>>({});
   const mdFileRef = useRef<HTMLInputElement>(null);
-  const pkgFileRef = useRef<HTMLInputElement>(null);
-  const rtFileRef = useRef<HTMLInputElement>(null);
   const docxFileRef = useRef<HTMLInputElement>(null);
   const previewScrollRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
-      setMd(load(KEYS.gzhDraft, DEMO_MD));
+      const storedVer = window.localStorage.getItem("dazhou-demo-version");
+      const md0 = storedVer !== DEMO_VERSION ? DEMO_MD : load(KEYS.gzhDraft, DEMO_MD);
+      window.localStorage.setItem("dazhou-demo-version", DEMO_VERSION);
+      setMd(md0);
       setSettings(load(KEYS.gzhSettings, DEFAULT_GZH_SETTINGS));
       setIp(load(KEYS.ipProfile, DEFAULT_IP_PROFILE));
       setEnding(load(KEYS.gzhEnding, DEFAULT_ENDING));
@@ -503,61 +414,6 @@ export default function GzhWorkspace() {
     notify(`${f.name} · 文本已载入${extra}`);
   };
 
-  const importPackage = async (files: FileList | null) => {
-    if (!files?.length) return;
-    const list = Array.from(files);
-    const mdFile = list
-      .filter((f) => /\.(md|markdown|txt)$/i.test(f.name))
-      .sort((a, b) => b.size - a.size)[0];
-    if (!mdFile) {
-      notify("所选文件夹中没有找到 Markdown 或 TXT 文件");
-      return;
-    }
-    const base = (mdFile.webkitRelativePath || mdFile.name).includes("/")
-      ? (mdFile.webkitRelativePath || mdFile.name).slice(0, (mdFile.webkitRelativePath || mdFile.name).lastIndexOf("/") + 1)
-      : "";
-    const map: Record<string, string> = {};
-    for (const f of list) {
-      if (!/^image\//.test(f.type) && !/\.(png|jpe?g|gif|webp|svg)$/i.test(f.name)) continue;
-      const url = URL.createObjectURL(f);
-      const rel = f.webkitRelativePath || f.name;
-      const short = rel.startsWith(base) ? rel.slice(base.length) : rel;
-      map[`./${short}`] = url;
-      map[short] = url;
-      map[f.name] = url;
-    }
-    setImageMap((old) => ({ ...old, ...map }));
-    let text = await mdFile.text();
-    let extra = "";
-    if (!hasMarkdownStructure(text)) {
-      const r = autoStructureText(text);
-      text = r.markdown;
-      extra = ` · 已智能识别 ${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`;
-    }
-    setMd(text);
-    notify(`${mdFile.name} · ${Object.keys(map).length} 张图片已载入${extra}`);
-  };
-
-  const importRichText = async (f: File | undefined) => {
-    if (f) {
-      const text = await f.text();
-      const md = new TurndownService({ headingStyle: "atx" }).turndown(text);
-      const r = hasMarkdownStructure(md) ? md : autoStructureText(md).markdown;
-      setMd(r);
-      notify("富文本已转 Markdown" + (r !== md ? "，已智能识别结构" : ""));
-      return;
-    }
-    try {
-      const text = await navigator.clipboard.readText();
-      const md = new TurndownService({ headingStyle: "atx" }).turndown(text);
-      const r = hasMarkdownStructure(md) ? md : autoStructureText(md).markdown;
-      setMd(r);
-      notify("剪贴板内容已转 Markdown" + (r !== md ? "，已智能识别结构" : ""));
-    } catch {
-      notify("无法读取剪贴板，请直接粘贴到左侧编辑区");
-    }
-  };
-
   const importDocx = async (f: File | undefined) => {
     if (!f) return;
     setBusy(true);
@@ -618,47 +474,18 @@ export default function GzhWorkspace() {
     }
   };
 
-  const downloadWechatImages = async () => {
-    const localImages = output.images.filter((i) => i.src.startsWith("blob:"));
-    if (!localImages.length) {
-      notify("当前没有本地图片需要导出");
-      return;
-    }
-    const zip = new JSZip();
-    for (const img of localImages) {
-      try {
-        const blob = await (await fetch(img.src)).blob();
-        const name = `wechat-image-${localImages.indexOf(img) + 1}.${blob.type === "image/png" ? "png" : "jpg"}`;
-        zip.file(name, blob);
-      } catch {
-        /* skip */
-      }
-    }
-    const out = await zip.generateAsync({ type: "blob" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(out);
-    a.download = "微信图片.zip";
-    a.click();
-    notify("微信图片包已下载");
-  };
-
   const smartStructure = () => {
     const r = autoStructureText(md);
     setMd(r.markdown);
     notify(`已智能识别结构：${r.headings} 个章节 / ${r.bullets} 条要点 / ${r.ordered} 条步骤`);
   };
 
-  const previewClass =
-    device === "mobile"
-      ? "mx-auto w-[375px] min-h-[600px]"
-      : device === "focus"
-        ? "mx-auto w-[640px] min-h-[600px]"
-        : "mx-auto w-full max-w-[720px] min-h-[600px]";
+  const previewClass = "mx-auto w-full max-w-[720px] min-h-[600px]";
 
   return (
-    <div className="flex h-[calc(100vh-56px)] flex-col">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 lg:p-6">
       {/* 工具栏 */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--sw-line)] bg-white px-4 py-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel)] px-4 py-2 shadow-[var(--sw-shadow)]">
         <div className="flex items-center gap-1.5">
           <Button
             variant="outline"
@@ -674,12 +501,6 @@ export default function GzhWorkspace() {
           </Button>
           <Button variant="outline" size="sm" onClick={() => setPanel(panel === "ending" ? null : "ending")}>
             固定结尾
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setPanel(panel === "titles" ? null : "titles")}>
-            爆款标题
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setPanel(panel === "compliance" ? null : "compliance")}>
-            合规报告
           </Button>
         </div>
         <Separator orientation="vertical" className="h-5" />
@@ -714,40 +535,40 @@ export default function GzhWorkspace() {
           />
           <span className="w-8 tabular-nums text-foreground">{settings.lineHeight}</span>
         </div>
-        <Select
-          value={settings.fontFamily}
-          onValueChange={(v) => setSettings({ ...settings, fontFamily: v as GzhSettings["fontFamily"] })}
-        >
-          <SelectTrigger className="h-8 w-[150px] text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="sans">苹方 / 系统黑体</SelectItem>
-            <SelectItem value="heiti">思源黑体</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={settings.chapterStyle}
-          onValueChange={(v) => setSettings({ ...settings, chapterStyle: v as ChapterStyleId })}
-        >
-          <SelectTrigger className="h-8 w-[190px] text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {CHAPTER_STYLES.map((s) => (
-              <SelectItem key={s.id} value={s.id}>{s.mark} · {s.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Label className="text-[11px] text-[var(--sw-muted)]">字体</Label>
+          <Select
+            value={settings.fontFamily}
+            onValueChange={(v) => setSettings({ ...settings, fontFamily: v as GzhSettings["fontFamily"] })}
+          >
+            <SelectTrigger className="h-8 w-[150px] text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="sans">苹方 / 系统黑体</SelectItem>
+              <SelectItem value="heiti">思源黑体</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Label className="text-[11px] text-[var(--sw-muted)]">章节样式</Label>
+          <Select
+            value={settings.chapterStyle}
+            onValueChange={(v) => setSettings({ ...settings, chapterStyle: v as ChapterStyleId })}
+          >
+            <SelectTrigger className="h-8 w-[190px] text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {CHAPTER_STYLES.map((s) => (
+                <SelectItem key={s.id} value={s.id}>{s.mark} · {s.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Separator orientation="vertical" className="h-5" />
         <Button variant="outline" size="sm" onClick={() => mdFileRef.current?.click()}>
           导入 MD / TXT
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => pkgFileRef.current?.click()}>
-          导入文章包
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => rtFileRef.current?.click()}>
-          导入富文本
         </Button>
         <Button variant="outline" size="sm" onClick={() => docxFileRef.current?.click()}>
           导入 docx
@@ -759,20 +580,18 @@ export default function GzhWorkspace() {
           清空
         </Button>
         <input ref={mdFileRef} type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden onChange={(e) => importMdFile(e.target.files?.[0])} />
-        <input ref={pkgFileRef} type="file" multiple hidden webkitdirectory="" directory="" onChange={(e) => importPackage(e.target.files)} />
-        <input ref={rtFileRef} type="file" accept=".html,.htm,text/html" hidden onChange={(e) => importRichText(e.target.files?.[0])} />
         <input ref={docxFileRef} type="file" accept=".docx" hidden onChange={(e) => importDocx(e.target.files?.[0])} />
       </div>
 
-      <div className="grid flex-1 grid-cols-2 overflow-hidden">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-hidden lg:grid-cols-2">
         {/* 左：编辑器 */}
-        <div className="flex min-h-0 flex-col border-r border-[var(--sw-line)]">
-          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-white px-4 py-2.5">
+        <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel)] shadow-[var(--sw-shadow)]">
+          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-[var(--sw-panel-2)] px-6 py-2.5">
             <span className="sw-folio">01 · 原稿<span className="ml-2 font-normal normal-case tracking-normal text-[var(--sw-muted)]">MARKDOWN / TXT</span></span>
             <span className="text-[11px] text-[var(--sw-muted)]">{busy ? "转换中…" : "已自动保存"}</span>
           </div>
           <textarea
-            className="flex-1 bg-white p-5 font-mono text-[13.5px] leading-[1.85] text-[var(--sw-text)] outline-none placeholder:text-[var(--sw-faint)]"
+            className="flex-1 resize-none bg-transparent p-6 font-mono text-[13.5px] leading-[1.85] text-[var(--sw-text)] outline-none placeholder:text-[var(--sw-faint)]"
             value={md}
             onChange={(e) => setMd(e.target.value)}
             placeholder="# 在这里粘贴或编写 Markdown…"
@@ -781,32 +600,20 @@ export default function GzhWorkspace() {
         </div>
 
         {/* 右：预览 */}
-        <div className="flex min-h-0 flex-col bg-[var(--sw-panel-3)]">
-          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-white px-4 py-2.5">
+        <div className="sw-desk flex min-h-0 flex-col overflow-hidden rounded-lg border border-[var(--sw-line)] bg-[var(--sw-panel-3)] shadow-[var(--sw-shadow)]">
+          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-[var(--sw-panel)] px-4 py-2.5">
             <div className="flex items-center gap-2">
               <span className="sw-folio">02 · 预览</span>
               <ToggleGroup
-                value={device ? [device] : []}
-                onValueChange={(v) => {
-                  if (v.length) setDevice(v[0] as typeof device);
-                }}
+                value={["mobile"]}
+                onValueChange={() => setDevice("mobile")}
                 variant="outline"
                 size="sm"
               >
-                <ToggleGroupItem value="desktop">公众号</ToggleGroupItem>
-                <ToggleGroupItem value="focus">专注</ToggleGroupItem>
                 <ToggleGroupItem value="mobile">手机</ToggleGroupItem>
               </ToggleGroup>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={downloadWechatImages}
-                title="导出本地图片为微信图片包"
-              >
-                微信图片
-              </Button>
               <ShimmerButton
                 onClick={copyToWechat}
                 shimmerColor="#8ab4ff"
@@ -819,7 +626,7 @@ export default function GzhWorkspace() {
               </ShimmerButton>
             </div>
           </div>
-          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-white px-4 py-2">
+          <div className="flex items-center justify-between border-b border-[var(--sw-line)] bg-[var(--sw-panel)] px-4 py-2">
             <span className="sw-folio">
               字数 <NumberTicker value={output.words} className="tabular-nums text-foreground" /> · 约{" "}
               <NumberTicker value={output.minutes} className="tabular-nums text-foreground" /> 分钟
@@ -829,7 +636,7 @@ export default function GzhWorkspace() {
               <NumberTicker value={output.images.length} className="tabular-nums text-foreground" /> 图
             </span>
           </div>
-          <div ref={previewScrollRef} className="min-h-0 flex-1 overflow-y-auto p-5">
+          <div ref={previewScrollRef} className="min-h-0 flex-1 overflow-y-auto p-6">
             <section id="gzh-preview" className={`wechat-preview rounded-sm ${previewClass}`} style={{ padding: "28px 20px" }}>
               <section dangerouslySetInnerHTML={{ __html: output.html }} />
             </section>
@@ -850,16 +657,6 @@ export default function GzhWorkspace() {
       {panel === "ending" && (
         <AppDialog title="03 · 固定结尾" open={panel === "ending"} onOpenChange={(v) => !v && setPanel(null)}>
           <EndingPanel ending={ending} setEnding={(e) => { setEnding(e); save(KEYS.gzhEnding, e); }} enabled={settings.endingEnabled} setEnabled={(v) => setSettings({ ...settings, endingEnabled: v })} />
-        </AppDialog>
-      )}
-      {panel === "titles" && (
-        <AppDialog title="04 · 爆款标题" open={panel === "titles"} onOpenChange={(v) => !v && setPanel(null)}>
-          <TitlePanel md={md} />
-        </AppDialog>
-      )}
-      {panel === "compliance" && (
-        <AppDialog title="05 · 合规报告" open={panel === "compliance"} onOpenChange={(v) => !v && setPanel(null)}>
-          <CompliancePanel output={output} />
         </AppDialog>
       )}
     </div>

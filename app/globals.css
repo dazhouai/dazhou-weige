@@ -5,58 +5,58 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Swiss：中性纸面 + 克莱因蓝点缀，细线建立秩序 */
-  --sw-bg: #f2f2f4;
+  /* 暖纸工作台：米白环境 + 暖棕文字 + 暖橙信号光 */
+  --sw-bg: #faf7f2;
   --sw-panel: #ffffff;
-  --sw-panel-2: #fafafb;
-  --sw-panel-3: #f5f5f7;
-  --sw-line: #e3e3e8;
-  --sw-line-strong: #d4d4db;
-  --sw-text: #0a0a0a;
-  --sw-muted: #6f6f78;
-  --sw-faint: #9c9ca6;
-  --sw-accent: #002fa7;
-  --sw-accent-2: #002fa7;
-  --sw-accent-soft: #e8edfb;
-  --sw-accent-ink: #001e6b;
-  --sw-danger: #e4002b;
+  --sw-panel-2: #f5f0e8;
+  --sw-panel-3: #efe9de;
+  --sw-line: #e0d8cc;
+  --sw-line-strong: #c9c0b2;
+  --sw-text: #3a352e;
+  --sw-muted: #8a8177;
+  --sw-faint: #b5aca0;
+  --sw-accent: #d97706;
+  --sw-accent-2: #b45309;
+  --sw-accent-soft: rgba(217, 119, 6, 0.1);
+  --sw-accent-ink: #92400e;
+  --sw-danger: #dc2626;
   --sw-on-accent: #ffffff;
-  --sw-shadow: none;
+  --sw-shadow: 0 1px 3px rgba(58, 53, 46, 0.06);
   --sw-focus: 2px;
-  /* shadcn 语义令牌（映射瑞士体系） */
-  --background: #f2f2f4;
-  --foreground: #0a0a0a;
+  /* shadcn 语义令牌（映射暖色体系） */
+  --background: #faf7f2;
+  --foreground: #3a352e;
   --card: #ffffff;
-  --card-foreground: #0a0a0a;
+  --card-foreground: #3a352e;
   --popover: #ffffff;
-  --popover-foreground: #0a0a0a;
-  --primary: #002fa7;
+  --popover-foreground: #3a352e;
+  --primary: #d97706;
   --primary-foreground: #ffffff;
-  --secondary: #f5f5f7;
-  --secondary-foreground: #0a0a0a;
-  --muted: #f5f5f7;
-  --muted-foreground: #6f6f78;
-  --accent: #e8edfb;
-  --accent-foreground: #001e6b;
-  --destructive: #e4002b;
+  --secondary: #f5f0e8;
+  --secondary-foreground: #3a352e;
+  --muted: #f5f0e8;
+  --muted-foreground: #8a8177;
+  --accent: rgba(217, 119, 6, 0.1);
+  --accent-foreground: #92400e;
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #e3e3e8;
-  --input: #e3e3e8;
-  --ring: #002fa7;
-  --chart-1: #002fa7;
-  --chart-2: #4d7cfe;
-  --chart-3: #00204a;
-  --chart-4: #6f6f78;
-  --chart-5: #e4002b;
+  --border: #e0d8cc;
+  --input: #e0d8cc;
+  --ring: #d97706;
+  --chart-1: #d97706;
+  --chart-2: #f59e0b;
+  --chart-3: #fbbf24;
+  --chart-4: #8a8177;
+  --chart-5: #dc2626;
   --radius: 0.25rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0a0a0a;
-  --sidebar-primary: #002fa7;
+  --sidebar: #faf7f2;
+  --sidebar-foreground: #3a352e;
+  --sidebar-primary: #d97706;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8edfb;
-  --sidebar-accent-foreground: #001e6b;
-  --sidebar-border: #e3e3e8;
-  --sidebar-ring: #002fa7;
+  --sidebar-accent: rgba(217, 119, 6, 0.1);
+  --sidebar-accent-foreground: #92400e;
+  --sidebar-border: #e0d8cc;
+  --sidebar-ring: #d97706;
 }
 
 html,
@@ -67,11 +67,12 @@ body {
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   font-feature-settings: "tnum";
   letter-spacing: 0.01em;
+  font-size: 15px;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #d8d8de transparent;
+  scrollbar-color: #c9c0b2 transparent;
 }
 
 textarea {
@@ -92,26 +93,33 @@ textarea {
 }
 
 ::selection {
-  background: #002fa7;
+  background: #d97706;
   color: #ffffff;
 }
 
 .wechat-preview {
-  background: #fff;
+  background: #ffffff;
   color: #374151;
-  border: 1px solid #e3e3e8;
+  border: 1px solid #e0d8cc;
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont,
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   overflow-wrap: break-word;
 }
 
 .sw-folio {
-  font-family: var(--font-sans), ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.16em;
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
   color: var(--sw-muted);
   font-weight: 500;
   text-transform: uppercase;
+}
+
+.sw-desk {
+  background-image:
+    linear-gradient(to right, rgba(58, 53, 46, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(58, 53, 46, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 .sw-rule {
@@ -122,12 +130,12 @@ textarea {
 
 .sw-btn {
   border: 1px solid var(--sw-line);
-  background: #ffffff;
+  background: var(--sw-panel-2);
   color: var(--sw-text);
   border-radius: 2px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1;
-  padding: 8px 12px;
+  padding: 8px 14px;
   transition: background-color 120ms ease, border-color 120ms ease,
     color 120ms ease;
   cursor: pointer;
@@ -144,19 +152,19 @@ textarea {
 .sw-btn-danger {
   border-color: color-mix(in srgb, var(--sw-danger) 35%, transparent);
   color: var(--sw-danger);
-  background: color-mix(in srgb, var(--sw-danger) 4%, white);
+  background: color-mix(in srgb, var(--sw-danger) 8%, var(--sw-panel-2));
 }
 .sw-btn-danger:hover {
-  background: color-mix(in srgb, var(--sw-danger) 8%, white);
+  background: color-mix(in srgb, var(--sw-danger) 14%, var(--sw-panel-2));
   border-color: color-mix(in srgb, var(--sw-danger) 55%, transparent);
 }
 
 .sw-input {
   border: 1px solid var(--sw-line);
-  background: #ffffff;
+  background: var(--sw-panel);
   border-radius: 2px;
-  font-size: 12px;
-  padding: 7px 10px;
+  font-size: 13px;
+  padding: 8px 12px;
   color: var(--sw-text);
   transition: border-color 120ms ease;
 }
@@ -172,7 +180,7 @@ textarea {
   height: 10px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #d8d8de;
+  background: #d0c8bc;
   border: 3px solid transparent;
   background-clip: content-box;
 }
@@ -245,36 +253,36 @@ textarea {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(0.97 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(0.97 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.92 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.92 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.92 0 0);
+  --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
   --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar: oklch(0.97 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-accent: oklch(0.92 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: oklch(0.556 0 0);
 }
 

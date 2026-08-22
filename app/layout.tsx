@@ -1,20 +1,33 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/AppShell";
-import { cn } from "@/lib/utils";
+import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Sentinel微排版｜公众号 + 小红书排版工作台",
+  title: "大洲微格 · 公众号智能排版工作台",
   description:
-    "一篇 Markdown 母稿，同时产出公众号富文本与小红书图文海报。智能排版、合规校验、6 套主题、IP 专属配色。",
+    "不注册、不联网、不上传的公众号智能排版工具。一篇 Markdown 母稿，一键产出合规 HTML，3 分钟搞定排版。",
+  keywords: [
+    "公众号排版",
+    "公众号工具",
+    "Markdown",
+    "排版工具",
+    "AI 工具",
+    "大洲微格",
+    "跟着大洲学AI",
+  ],
+  openGraph: {
+    title: "大洲微格 · 公众号智能排版工作台",
+    description:
+      "不注册、不联网、不上传，3 分钟搞定一篇公众号。",
+    type: "website",
+    locale: "zh_CN",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -23,11 +36,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN" className={cn("font-sans", inter.variable)}>
-      <body className="flex min-h-full flex-col antialiased">
+    <html lang="zh-CN">
+      <body className="flex h-screen flex-col antialiased overflow-hidden">
         <AppShell />
-        <main className="flex-1">{children}</main>
-        <Toaster position="bottom-center" />
+        <main className="flex min-h-0 flex-1 overflow-hidden flex-col">{children}</main>
+        <Footer />
+        <Toaster theme="light" position="bottom-center" />
       </body>
     </html>
   );

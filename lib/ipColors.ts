@@ -55,7 +55,7 @@ export async function extractIpThemes(file: File, ipName: string): Promise<{ ava
   const secondary = sorted[1] || main;
   const mainHex = toHex({ r: Math.round(main.r / main.count), g: Math.round(main.g / main.count), b: Math.round(main.b / main.count) });
   const secHex = toHex({ r: Math.round(secondary.r / secondary.count), g: Math.round(secondary.g / secondary.count), b: Math.round(secondary.b / secondary.count) });
-  const base = ipName || "Sentinel";
+  const base = ipName || "大洲";
 
   const make = (id: string, accent: string, name: string): ThemeManifest => {
     const roles: RoleColors = {

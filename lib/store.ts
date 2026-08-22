@@ -1,21 +1,10 @@
-import type {
-  FixedEnding,
-  GzhSettings,
-  IpProfile,
-  Poster,
-  XhsCopy,
-  XhsProfile,
-} from "./types";
+import type { FixedEnding, GzhSettings, IpProfile } from "./types";
 
 export const KEYS = {
-  gzhDraft: "sentinel-gzh-draft",
-  gzhSettings: "sentinel-gzh-settings",
-  gzhEnding: "sentinel-gzh-ending",
-  ipProfile: "sentinel-ip-profile",
-  xhsDraft: "sentinel-xhs-draft",
-  xhsCopy: "sentinel-xhs-copy",
-  xhsPosters: "sentinel-xhs-posters",
-  xhsProfile: "sentinel-xhs-profile",
+  gzhDraft: "dazhou-gzh-draft",
+  gzhSettings: "dazhou-gzh-settings",
+  gzhEnding: "dazhou-gzh-ending",
+  ipProfile: "dazhou-ip-profile",
 };
 
 export function load<T>(key: string, fallback: T): T {
@@ -54,45 +43,14 @@ export const DEFAULT_GZH_SETTINGS: GzhSettings = {
 };
 
 export const DEFAULT_ENDING: FixedEnding = {
-  text: "哈喽，我是 Sentinel。\n让每一篇公众号，都有一身好排版。\n如果今天这篇对你有帮助，欢迎点赞、在看、转发，我们下篇见。",
+  text: "哈喽，我是大洲。\n让每一篇公众号，都有一身好排版。\n如果今天这篇对你有帮助，欢迎点赞、在看、转发，我们下篇见。",
   useAvatar: true,
 };
 
 export const DEFAULT_IP_PROFILE: IpProfile = {
-  ipName: "Sentinel",
+  ipName: "大洲",
   ipThemes: [],
 };
-
-export const DEFAULT_XHS_PROFILE: XhsProfile = {
-  account: "@跟着大洲学AI",
-  tagPool: [
-    "AI工具",
-    "AI实战",
-    "效率神器",
-    "公众号运营",
-    "自媒体干货",
-    "零基础编程",
-    "vibecoding",
-    "真实复盘",
-  ],
-  themeId: "moyu-green",
-  slogan: "AI 工具，只讲人话，不搞虚的。",
-};
-
-export const DEFAULT_XHS_COPY: XhsCopy = {
-  titles: [],
-  preferredTitle: "",
-  body: "",
-  tags: [],
-  tips: {
-    time: "",
-    coverNote: "",
-    comment: "",
-    repost: "",
-  },
-};
-
-export const DEFAULT_POSTERS: Poster[] = [];
 
 export function gzhSettings(): GzhSettings {
   return load<GzhSettings>(KEYS.gzhSettings, DEFAULT_GZH_SETTINGS);

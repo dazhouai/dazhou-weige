@@ -1,12 +1,10 @@
 /**
- * 渲染回归测试：跑通公众号渲染管线 + 合规断言 + 小红书拆文。
+ * 渲染回归测试：跑通公众号渲染管线 + 合规断言。
  * 运行：npm run test:render
  */
 import { renderWechatArticle } from "../lib/renderGzh";
 import { getTheme } from "../lib/themes";
-import { DEFAULT_GZH_SETTINGS, DEFAULT_ENDING, DEFAULT_IP_PROFILE, DEFAULT_XHS_PROFILE } from "../lib/store";
-import { splitToPosters } from "../lib/xhsSplit";
-import { generateXhsCopy } from "../lib/xhsCopy";
+import { DEFAULT_GZH_SETTINGS, DEFAULT_ENDING, DEFAULT_IP_PROFILE } from "../lib/store";
 import { generateTitles } from "../lib/titles";
 import { autoStructureText, hasMarkdownStructure } from "../lib/autoStructure";
 
@@ -40,7 +38,7 @@ const MD = `# 实测：一篇稿子两种排版
 
 \`\`\`bash
 npm run dev
-npm run xhs:cards
+npm run test:render
 \`\`\`
 
 | 元素 | 适合表达 |
@@ -76,19 +74,6 @@ check("结语章 ∞ 处理", out.html.includes("∞") || out.toc.length >= 2);
 check("固定结尾生效", out.html.includes("END") && out.html.includes("点赞"));
 check("关键词下划线", out.html.includes("border-bottom:2px solid"));
 check("全角标点", out.report.punctuationIssues.length === 0);
-
-const posters = splitToPosters(MD, DEFAULT_XHS_PROFILE);
-check("小红书拆文 9 卡", posters.length === 9, `len=${posters.length}`);
-check("封面有标题", posters[0].title.length > 0);
-check("流程卡有步骤", (posters[4].steps?.length ?? 0) >= 2);
-check("尾卡有标签", (posters[8].tags?.length ?? 0) >= 3);
-
-const xcopy = generateXhsCopy(MD, DEFAULT_XHS_PROFILE);
-check("文案标题 5 个", xcopy.titles.length === 5, `len=${xcopy.titles.length}`);
-check("文案有正文", xcopy.body.length > 100);
-check("文案无 Markdown 残留", !/^#{1,3}\s/m.test(xcopy.body));
-check("标签 8–10 个", xcopy.tags.length >= 8 && xcopy.tags.length <= 10, `len=${xcopy.tags.length}`);
-check("发布建议齐全", Object.values(xcopy.tips).every((v) => v.length > 0));
 
 const titles = generateTitles(MD);
 check("公众号标题 ≥8 个", titles.length >= 8, `len=${titles.length}`);
