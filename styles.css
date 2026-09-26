@@ -80,9 +80,9 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .wechat-follow .channel-code{padding:14px;background:white;border:1px solid var(--line)}
 .detail-follow p.channel-tip{font-size:12px;margin-top:18px}
 .artwork.art-publishing{background:#eef2ec;color:#253d35}
-.publishing-art{width:100%;max-width:420px;padding:16px 24px;text-align:center}
+.publishing-art{width:100%;max-width:420px;padding:16px 16px;text-align:center}
 .publishing-kicker{display:block;font-size:8px;letter-spacing:.12em;margin-bottom:12px;opacity:.65}
-.publishing-papers{display:flex;align-items:center;justify-content:center;gap:12px}
+.publishing-papers{display:flex;align-items:center;justify-content:center;gap:8px}
 .publishing-paper{width:105px;min-height:132px;padding:12px;text-align:left;box-shadow:4px 5px 0 #20372d14;border:1px solid #d9dfd5}
 .publishing-paper>span{display:block;font-size:10px;margin-bottom:9px}
 .publishing-paper strong{font-size:19px;line-height:1.3;font-weight:600;letter-spacing:-.03em}
