@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0262bb3d267acc2c",
+  "revision": "f968995e8bc06499",
   "projects": [
     {
       "id": "dazhou-browser",
@@ -164,11 +164,11 @@
       "id": "video-download",
       "name": "视频下载工具",
       "category": "AI 工具",
-      "summary": "把命令行下载操作，整理成一个直观的本地页面。",
-      "description": "这是一个围绕 yt-dlp 和 ffmpeg 制作的本地网页工具，用于下载自己有权保存的视频与音频。界面集中展示输入链接、选择输出格式和查看任务进度，让常用操作更容易完成。",
+      "summary": "把视频链接交给本地工具或 AI 助手，下载后拿到实际文件。",
+      "description": "这是一个围绕 yt-dlp 和 FFmpeg 制作的开源本地工具，提供中文网页和供 AI 助手调用的下载命令。命令行会检查文件、音视频流与完整解码，并生成验收记录，用于保存自己有权下载的视频与音频。",
       "status": "开发中",
-      "progress": "基础服务和错误提示已验证，真实媒体完整下载仍待验收。",
-      "updated": "2026-08-22",
+      "progress": "MIT 开源 v0.1.0 已发布，网页与命令行下载已实测；抖音浏览器辅助流程尚未自动集成。",
+      "updated": "2026-09-26",
       "tags": [
         "视频工具",
         "本地运行",
@@ -176,7 +176,14 @@
       ],
       "featured": false,
       "order": 10,
-      "visual": "download"
+      "visual": "download",
+      "repositories": [
+        {
+          "label": "GitHub 源码",
+          "url": "https://github.com/dazhouai/video-download-studio",
+          "description": "下载器源码、中文使用说明、AI 助手工作流与测试；不含下载的视频或账号凭据。"
+        }
+      ]
     }
   ]
 }
