@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "a70d7bc882a9e041",
+  "revision": "43ea338b8433505c",
   "projects": [
     {
       "id": "dazhou-browser",
@@ -46,8 +46,8 @@
       "summary": "让散落的知识，成为自己和 AI 都能接着用的记忆。",
       "description": "资料、决策和经验不应该只留在某一次对话里。我用 Obsidian 和 Markdown 组织原始资料、知识笔记、项目记录与协作规则，让不同 AI 工具从同一份记录接续工作，并用图谱与面板查看知识之间的联系。",
       "status": "本地可用",
-      "progress": "跨工具记忆交接与知识图谱已落地；持续维护资料关联和调度可靠性。",
-      "updated": "2026-09-25",
+      "progress": "知识库已连接个人官网，让项目介绍与进展随日常整理持续更新。",
+      "updated": "2026-09-26",
       "tags": [
         "Obsidian",
         "知识管理",
