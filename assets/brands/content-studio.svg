@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="大洲内容驾驶舱">
+  <rect width="64" height="64" fill="#E4002B"/>
+  <path d="M14 14h36v8H22v12h22v8H22v8h28" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter"/>
+  <rect x="42" y="29" width="8" height="8" fill="#111"/>
+</svg>

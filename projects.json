@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "revision": "a70d7bc882a9e041",
+  "projects": [
+    {
+      "id": "dazhou-browser",
+      "name": "大洲浏览器",
+      "category": "AI 工具",
+      "summary": "给不同网页账号，一个独立的工作空间。",
+      "description": "多账号工作时，登录状态与使用环境经常相互干扰。我尝试用 AI 搭建一款 Mac 本地浏览器，让不同任务拥有各自的网页环境、会话和设置，减少在账号之间反复切换的麻烦。",
+      "status": "内测中",
+      "progress": "Mac 本地初版已完成，网页访问与环境隔离已做技术验证；真实账号使用仍在验收。",
+      "updated": "2026-09-25",
+      "tags": [
+        "macOS",
+        "账号隔离",
+        "效率工具"
+      ],
+      "featured": true,
+      "order": 1,
+      "visual": "browser"
+    },
+    {
+      "id": "sentinel-typeset",
+      "name": "大洲微格 · 微排版",
+      "category": "AI 工具",
+      "summary": "把一篇好内容，排成清爽易读的公众号文章。",
+      "description": "自己做内容以后，我发现排版会反复消耗创作时间。大洲微格专注公众号文章排版，支持从 Markdown 或纯文本整理文章、切换主题、实时预览，再复制为公众号富文本。稿件保存在自己的浏览器中。",
+      "status": "已上线",
+      "progress": "公众号排版工具已开放使用，支持主题切换、实时预览和复制；保留使用教程、主题库与常见问题。",
+      "updated": "2026-09-26",
+      "tags": [
+        "公众号",
+        "Markdown",
+        "内容排版"
+      ],
+      "featured": true,
+      "order": 2,
+      "visual": "typeset",
+      "url": "https://dazhouweige.top/weige/"
+    },
+    {
+      "id": "knowledge-base",
+      "name": "会生长的个人知识库",
+      "category": "知识与工作流",
+      "summary": "让散落的知识，成为自己和 AI 都能接着用的记忆。",
+      "description": "资料、决策和经验不应该只留在某一次对话里。我用 Obsidian 和 Markdown 组织原始资料、知识笔记、项目记录与协作规则，让不同 AI 工具从同一份记录接续工作，并用图谱与面板查看知识之间的联系。",
+      "status": "本地可用",
+      "progress": "跨工具记忆交接与知识图谱已落地；持续维护资料关联和调度可靠性。",
+      "updated": "2026-09-25",
+      "tags": [
+        "Obsidian",
+        "知识管理",
+        "AI 记忆"
+      ],
+      "featured": true,
+      "order": 3,
+      "visual": "knowledge"
+    },
+    {
+      "id": "learn-ai",
+      "name": "跟着大洲学AI",
+      "category": "内容创作",
+      "summary": "从 AI 门外人出发，分享真实实测、过程与返工。",
+      "description": "这是我的公众号和同名视频号。内容来自自己的工具实测、项目尝试和日常创作：哪些地方好用，哪里踩了坑，最后做出了什么。希望用普通人能看懂的方式，把 AI 真正放进工作与生活。",
+      "status": "持续创作",
+      "progress": "持续更新 AI 工具实测与项目复盘，记录从想法到作品的实际过程。",
+      "updated": "2026-09-26",
+      "tags": [
+        "公众号",
+        "AI 实测",
+        "视频号"
+      ],
+      "featured": false,
+      "order": 4,
+      "visual": "learn"
+    },
+    {
+      "id": "sugushuo",
+      "name": "溯古说",
+      "category": "内容创作",
+      "summary": "回到当时，看懂古人。用 AI 影像讲历史里的选择。",
+      "description": "历史人物的选择，往往要放回当时的处境才看得清。溯古说从史料出发，以旁白、影像和字幕讲述具体的人与事；同账号也制作《见字如晤》书信系列，探索传统文化与 AI 影像的结合。",
+      "status": "持续创作",
+      "progress": "第 22 期《晏子与越石父》已完成本地成片，待审阅后再发布。",
+      "updated": "2026-09-26",
+      "tags": [
+        "历史故事",
+        "AI 影像",
+        "见字如晤"
+      ],
+      "featured": false,
+      "order": 5,
+      "visual": "history"
+    },
+    {
+      "id": "danranshuo",
+      "name": "澹然说",
+      "category": "内容创作",
+      "summary": "用道家智慧，回应普通生活里的具体困惑。",
+      "description": "澹然说是我的道家生活内容账号。每一期围绕一个真实困境展开：工作、关系、家庭与自我选择。用一条清楚的叙事线，配合 AI 影像，试着把古老智慧讲成今天仍然听得进去的话。",
+      "status": "持续创作",
+      "progress": "第 34 期《不想升职，是没有上进心吗？》已完成本地成片，尚未发布。",
+      "updated": "2026-09-25",
+      "tags": [
+        "道家智慧",
+        "生活思考",
+        "AI 短片"
+      ],
+      "featured": false,
+      "order": 6,
+      "visual": "tao"
+    },
+    {
+      "id": "content-studio",
+      "name": "大洲内容驾驶舱",
+      "category": "知识与工作流",
+      "summary": "让选题、创作、审核与发布，在一个工作台里衔接。",
+      "description": "同时做几个内容账号，真正复杂的是衔接过程：素材在哪、作品改到哪一版、是否审核、有没有实际发布。这个本地内容工作台围绕这些问题，把生产流程和结果记录集中起来。",
+      "status": "开发中",
+      "progress": "v0.2 工作台与流程底座已完成；完整内容案例和实际发布链路仍待验证。",
+      "updated": "2026-09-13",
+      "tags": [
+        "内容工作流",
+        "自动化",
+        "创作者工具"
+      ],
+      "featured": false,
+      "order": 7,
+      "visual": "studio"
+    },
+    {
+      "id": "video-download",
+      "name": "视频下载工具",
+      "category": "AI 工具",
+      "summary": "把命令行下载操作，整理成一个直观的本地页面。",
+      "description": "这是一个围绕 yt-dlp 和 ffmpeg 制作的本地网页工具，用于下载自己有权保存的视频与音频。界面集中展示输入链接、选择输出格式和查看任务进度，让常用操作更容易完成。",
+      "status": "开发中",
+      "progress": "基础服务和错误提示已验证，真实媒体完整下载仍待验收。",
+      "updated": "2026-08-22",
+      "tags": [
+        "视频工具",
+        "本地运行",
+        "媒体整理"
+      ],
+      "featured": false,
+      "order": 10,
+      "visual": "download"
+    }
+  ]
+}
