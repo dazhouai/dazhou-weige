@@ -68,6 +68,14 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .detail-sources h2{font-size:22px;font-weight:550;margin-bottom:16px}
 .detail-source+.detail-source{margin-top:22px}
 .detail-source p{font-size:14px;line-height:1.9;color:var(--muted);max-width:650px;margin-top:12px}
+.detail-follow{scroll-margin-top:30px;display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);align-items:center;gap:48px;background:var(--soft);border:1px solid var(--line);padding:32px;margin:32px 0 50px}
+.channel-code{display:block;max-width:300px}
+.channel-code img{display:block;width:100%;height:auto}
+.detail-follow h2{font-size:26px;font-weight:550;margin-bottom:16px}
+.detail-follow p{font-size:14px;color:var(--muted);line-height:1.95}
+.detail-follow .channel-handle{margin:20px 0;font-size:13px}
+.channel-handle strong{display:block;font-size:22px;font-weight:500;color:var(--ink);letter-spacing:.03em;overflow-wrap:anywhere}
+@media(max-width:600px){.detail-follow{grid-template-columns:1fr;gap:28px;padding:22px}.channel-code{margin:auto;width:100%}.detail-follow h2{font-size:22px}}
 .artwork{height:230px;background:var(--soft);position:relative;overflow:hidden;display:flex;justify-content:center;align-items:center;color:var(--blue);border:1px solid var(--line)}
 .card-link .artwork{transition:transform .3s,background .3s}
 .card-link:hover .artwork{background:var(--blue-light)}

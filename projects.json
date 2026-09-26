@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "513628f0c7d9247a",
+  "revision": "17f6590637741d8c",
   "projects": [
     {
       "id": "dazhou-browser",
@@ -91,7 +91,12 @@
       ],
       "featured": false,
       "order": 5,
-      "visual": "history"
+      "visual": "history",
+      "channel": {
+        "platform": "抖音",
+        "handle": "62245696647",
+        "qrImage": "/assets/sugushuo-douyin.png"
+      }
     },
     {
       "id": "danranshuo",
