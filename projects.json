@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "43ea338b8433505c",
+  "revision": "513628f0c7d9247a",
   "projects": [
     {
       "id": "dazhou-browser",
@@ -109,7 +109,14 @@
       ],
       "featured": false,
       "order": 6,
-      "visual": "tao"
+      "visual": "tao",
+      "repositories": [
+        {
+          "label": "开源视频工作流",
+          "url": "https://github.com/dazhouai/ai-video-account-workflow",
+          "description": "从澹然说前 12 期制作经验中整理出的通用视频工作流，包含选题、分镜、质检脚本与发布模板。"
+        }
+      ]
     },
     {
       "id": "content-studio",

@@ -57,8 +57,17 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .section-heading sup{font-size:13px;font-weight:400;vertical-align:top;margin-left:12px;color:var(--muted);letter-spacing:0}
 .section-description{font-size:13px;color:var(--muted);line-height:1.9}
 .featured-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:27px}
-.project-card{min-width:0}
-.card-link{display:block;height:100%}
+.project-card{min-width:0;display:flex;flex-direction:column}
+.card-link{display:block;flex:1}
+.project-sources{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.source-link{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:550;color:var(--blue);border-bottom:1px solid currentColor;padding-block:6px;line-height:1.5}
+.source-link svg{width:15px;height:15px;flex-shrink:0}
+.source-link:hover{color:var(--ink)}
+.source-link .source-icon{width:17px;height:17px}
+.detail-sources{margin:32px 0 50px;padding:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.detail-sources h2{font-size:22px;font-weight:550;margin-bottom:16px}
+.detail-source+.detail-source{margin-top:22px}
+.detail-source p{font-size:14px;line-height:1.9;color:var(--muted);max-width:650px;margin-top:12px}
 .artwork{height:230px;background:var(--soft);position:relative;overflow:hidden;display:flex;justify-content:center;align-items:center;color:var(--blue);border:1px solid var(--line)}
 .card-link .artwork{transition:transform .3s,background .3s}
 .card-link:hover .artwork{background:var(--blue-light)}
