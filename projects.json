@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "17f6590637741d8c",
+  "revision": "0262bb3d267acc2c",
   "projects": [
     {
       "id": "dazhou-browser",
@@ -45,8 +45,8 @@
       "category": "知识与工作流",
       "summary": "让散落的知识，成为自己和 AI 都能接着用的记忆。",
       "description": "资料、决策和经验不应该只留在某一次对话里。我用 Obsidian 和 Markdown 组织原始资料、知识笔记、项目记录与协作规则，让不同 AI 工具从同一份记录接续工作，并用图谱与面板查看知识之间的联系。",
-      "status": "本地可用",
-      "progress": "知识库已连接个人官网，让项目介绍与进展随日常整理持续更新。",
+      "status": "已开源",
+      "progress": "知识库面板与四层搭建方案已发布 MIT 开源首版，附空白模板、维护脚本和虚构示例演示。",
       "updated": "2026-09-26",
       "tags": [
         "Obsidian",
@@ -55,7 +55,14 @@
       ],
       "featured": true,
       "order": 3,
-      "visual": "knowledge"
+      "visual": "knowledge",
+      "repositories": [
+        {
+          "label": "知识库面板与搭建工具包",
+          "url": "https://github.com/dazhouai/dazhou-knowledge-base",
+          "description": "MIT 开源：六视图面板、四层知识库模板、AI 协作记忆维护工具与搭建指南。演示使用虚构数据。"
+        }
+      ]
     },
     {
       "id": "learn-ai",
@@ -73,7 +80,12 @@
       ],
       "featured": false,
       "order": 4,
-      "visual": "learn"
+      "visual": "learn",
+      "channel": {
+        "platform": "公众号",
+        "handle": "跟着大洲学AI",
+        "qrImage": "/assets/wechat-qrcode.jpg"
+      }
     },
     {
       "id": "sugushuo",
@@ -124,22 +136,29 @@
       ]
     },
     {
-      "id": "content-studio",
-      "name": "大洲内容驾驶舱",
+      "id": "gzh-xhs-pb",
+      "name": "公众号 × 小红书排版技能",
       "category": "知识与工作流",
-      "summary": "让选题、创作、审核与发布，在一个工作台里衔接。",
-      "description": "同时做几个内容账号，真正复杂的是衔接过程：素材在哪、作品改到哪一版、是否审核、有没有实际发布。这个本地内容工作台围绕这些问题，把生产流程和结果记录集中起来。",
-      "status": "开发中",
-      "progress": "v0.2 工作台与流程底座已完成；完整内容案例和实际发布链路仍待验证。",
-      "updated": "2026-09-13",
+      "summary": "一份内容，双平台成品。把公众号排版与小红书卡片串成一套工作流。",
+      "description": "这是我将公众号和小红书日常创作整理成的 AI 技能。围绕同一个选题，先把公众号草稿、主题排版、封面和发布文案做完整，再从定稿中提炼小红书轮播卡与配文。它负责衔接渠道和制作步骤，让同一份内容在两个平台各有适合的表达。",
+      "status": "已开源",
+      "progress": "双平台流程编排已在 GitHub 公开，提供使用规则和依赖说明；公众号排版、封面与小红书卡片由配套技能完成。",
+      "updated": "2026-09-26",
       "tags": [
-        "内容工作流",
-        "自动化",
-        "创作者工具"
+        "公众号排版",
+        "小红书卡片",
+        "开源 Skill"
       ],
       "featured": false,
       "order": 7,
-      "visual": "studio"
+      "visual": "publishing",
+      "repositories": [
+        {
+          "label": "GitHub 开源技能",
+          "url": "https://github.com/dazhouai/gzh-xhs-pb",
+          "description": "gzh-xhs-pb：公众号 × 小红书双平台技能编排入口，包含流程规则、安装说明及配套依赖。"
+        }
+      ]
     },
     {
       "id": "video-download",
