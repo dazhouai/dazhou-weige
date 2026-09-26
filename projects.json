@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "f968995e8bc06499",
+  "revision": "e94675cacc13604c",
   "projects": [
     {
       "id": "dazhou-browser",
@@ -8,9 +8,9 @@
       "category": "AI 工具",
       "summary": "给不同网页账号，一个独立的工作空间。",
       "description": "多账号工作时，登录状态与使用环境经常相互干扰。我尝试用 AI 搭建一款 Mac 本地浏览器，让不同任务拥有各自的网页环境、会话和设置，减少在账号之间反复切换的麻烦。",
-      "status": "内测中",
+      "status": "已开源",
       "progress": "Mac 本地初版已完成，网页访问与环境隔离已做技术验证；真实账号使用仍在验收。",
-      "updated": "2026-09-25",
+      "updated": "2026-09-26",
       "tags": [
         "macOS",
         "账号隔离",
@@ -18,7 +18,14 @@
       ],
       "featured": true,
       "order": 1,
-      "visual": "browser"
+      "visual": "browser",
+      "repositories": [
+        {
+          "label": "GitHub 开源项目",
+          "url": "https://github.com/dazhouai/dazhou-browser",
+          "description": "大洲浏览器源码、Mac 预览版、使用说明与协作开发复盘；基于 MIT 许可证公开。"
+        }
+      ]
     },
     {
       "id": "sentinel-typeset",
@@ -162,11 +169,11 @@
     },
     {
       "id": "video-download",
-      "name": "视频下载工具",
+      "name": "大洲下载器",
       "category": "AI 工具",
       "summary": "把视频链接交给本地工具或 AI 助手，下载后拿到实际文件。",
       "description": "这是一个围绕 yt-dlp 和 FFmpeg 制作的开源本地工具，提供中文网页和供 AI 助手调用的下载命令。命令行会检查文件、音视频流与完整解码，并生成验收记录，用于保存自己有权下载的视频与音频。",
-      "status": "开发中",
+      "status": "已开源",
       "progress": "MIT 开源 v0.1.0 已发布，网页与命令行下载已实测；抖音浏览器辅助流程尚未自动集成。",
       "updated": "2026-09-26",
       "tags": [
@@ -179,9 +186,9 @@
       "visual": "download",
       "repositories": [
         {
-          "label": "GitHub 源码",
+          "label": "GitHub 开源项目",
           "url": "https://github.com/dazhouai/video-download-studio",
-          "description": "下载器源码、中文使用说明、AI 助手工作流与测试；不含下载的视频或账号凭据。"
+          "description": "大洲下载器源码、中文使用说明与 AI 助手下载校验工作流；基于 MIT 许可证公开。"
         }
       ]
     }
