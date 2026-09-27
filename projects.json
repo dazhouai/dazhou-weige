@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "e94675cacc13604c",
+  "revision": "0826e606ebcfb1c0",
   "projects": [
     {
       "id": "dazhou-browser",
@@ -25,7 +25,21 @@
           "url": "https://github.com/dazhouai/dazhou-browser",
           "description": "大洲浏览器源码、Mac 预览版、使用说明与协作开发复盘；基于 MIT 许可证公开。"
         }
-      ]
+      ],
+      "caseStudy": {
+        "question": "在 Mac 上同时用多个网页账号，怎样让登录环境互不串？",
+        "answer": "大洲浏览器给每个任务建立独立环境：分别保存 Cookie、LocalStorage、IndexedDB、缓存和历史，并保存该环境的代理与配置。切换任务时打开对应环境，不必反复清理日常浏览器。",
+        "steps": [
+          "按账号或任务创建环境，每个环境使用独立浏览器目录；复制环境不携带已有登录会话。",
+          "给需要固定出口的环境配置代理，启动前检测 IP；代理不可用时不会自动改走直连。",
+          "在独立窗口自行登录，再用分组、搜索和归档管理环境；配置与数据保留在本机。"
+        ],
+        "result": "Mac Apple Silicon 的 v0.2.0 预览版已公开，源码、构建说明、测试和验收记录均在 GitHub。网页访问与环境隔离已做技术验证。",
+        "boundary": "真实 Google、Claude 账号登录及两条公网出口的长期使用仍待验收。隔离本机存储与配置不保证账号不会被平台关联，也不承诺免验证。",
+        "image": "/assets/cases/dazhou-browser.png",
+        "imageAlt": "大洲浏览器的环境管理界面，显示两个合成测试环境和独立环境列表",
+        "imageCaption": "v0.2.0 环境管理界面；画面使用合成测试数据，没有真实账号。"
+      }
     },
     {
       "id": "sentinel-typeset",
@@ -44,7 +58,21 @@
       "featured": true,
       "order": 2,
       "visual": "typeset",
-      "url": "https://dazhouweige.top/weige/"
+      "url": "https://dazhouweige.top/weige/",
+      "caseStudy": {
+        "question": "Markdown 稿件怎样排成清爽的公众号文章？",
+        "answer": "在大洲微格把 Markdown 或纯文本放进编辑区，选择主题并实时预览，再复制为公众号富文本。草稿保存在当前浏览器中。",
+        "steps": [
+          "导入或粘贴 Markdown、纯文本，检查标题、段落和引用等结构。",
+          "切换主题，在手机预览里调整字号、行距等阅读细节。",
+          "复制排版结果到公众号草稿箱，发布前逐段检查图片和样式。"
+        ],
+        "result": "工具已在官网微格页面开放，使用教程、主题库和常见问题也可直接查看。",
+        "boundary": "草稿保存在本机浏览器，当前没有跨设备同步。页面预览不等于公众号草稿箱验收，更不等于文章已经发布。",
+        "image": "/assets/cases/weige.png",
+        "imageAlt": "大洲微格演示稿的左右分栏界面，左侧编辑 Markdown，右侧预览公众号排版",
+        "imageCaption": "公开工具的演示稿截图；左侧编辑、右侧预览，内容为示例文字。"
+      }
     },
     {
       "id": "knowledge-base",
@@ -69,7 +97,21 @@
           "url": "https://github.com/dazhouai/dazhou-knowledge-base",
           "description": "MIT 开源：六视图面板、四层知识库模板、AI 协作记忆维护工具与搭建指南。演示使用虚构数据。"
         }
-      ]
+      ],
+      "caseStudy": {
+        "question": "怎样让不同 AI 工具接着使用同一个个人知识库？",
+        "answer": "用 Obsidian 和 Markdown 把原始资料、整理后的知识、项目状态与维护规则分层，给协作工具统一入口；每次任务从项目主页读当前快照，从日志看决策，再按来源回写。",
+        "steps": [
+          "Raw 保留原始出处，Wiki 沉淀概念和主题，Projects 保存项目快照与追加日志，Schema 规定读写边界。",
+          "让不同工具从同一项目入口读取，只把核实过的长期结论写回，避免旧聊天成为唯一记忆。",
+          "用本地面板查看图谱、检索、报告和健康度，发现断链、孤立页与缺失字段。"
+        ],
+        "result": "MIT 开源首版已公开：四层模板、六视图本地面板、维护脚本和 26 页虚构示例；在线演示可查看。",
+        "boundary": "开源包没有个人笔记、真实聊天或账号配置，演示使用虚构数据。候选记忆仍需人工核实；健康分只反映有限的结构检查。",
+        "image": "/assets/cases/knowledge-base.jpg",
+        "imageAlt": "大洲知识库生长面板的总览页，显示虚构示例的页面数量、双链和健康度",
+        "imageCaption": "开源演示面板截图；26 页笔记和统计均来自虚构示例库。"
+      }
     },
     {
       "id": "learn-ai",

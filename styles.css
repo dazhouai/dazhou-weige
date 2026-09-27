@@ -63,6 +63,20 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .source-link:hover{color:var(--ink)}
 .source-link .source-icon{width:17px;height:17px}
 .detail-sources{margin:32px 0 50px;padding:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.case-study{max-width:900px;margin:52px 0 44px;padding:40px;background:#f7f8fb;border:1px solid var(--line)}
+.case-study .eyebrow{margin-bottom:13px}
+.case-study h2{font-size:clamp(25px,3vw,34px);font-weight:600;line-height:1.4;letter-spacing:-.025em}
+.case-study h3{font-size:20px;font-weight:550;margin:30px 0 13px}
+.case-study p,.case-steps{font-size:15px;line-height:1.9;color:var(--muted)}
+.case-study .case-answer{font-size:17px;color:var(--ink);margin:18px 0 26px;max-width:760px}
+.case-figure{margin:0;background:white;border:1px solid var(--line)}
+.case-figure img{display:block;width:100%;height:auto}
+.case-figure figcaption{font-size:12px;line-height:1.7;color:var(--muted);padding:11px 15px}
+.case-steps{margin:0;padding-left:24px}
+.case-steps li{padding-left:8px;margin-top:9px}
+.case-steps li::marker{color:var(--blue);font-weight:600}
+.case-outcome{display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid var(--line);margin-top:30px}
+.case-outcome h3{margin-top:27px}
 .detail-sources h2{font-size:22px;font-weight:550;margin-bottom:16px}
 .detail-source+.detail-source{margin-top:22px}
 .detail-source p{font-size:14px;line-height:1.9;color:var(--muted);max-width:650px;margin-top:12px}
@@ -207,6 +221,8 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .about-copy>p:not(.eyebrow){color:var(--muted);font-size:13px;line-height:2;margin-top:15px;max-width:620px}
 .about-tags{display:flex;gap:23px;font-size:11px;color:var(--blue);margin-top:25px}
 .about-tags span{border-bottom:1px solid #ccd5ed;padding-bottom:5px}
+.about-source a{color:var(--blue);border-bottom:1px solid currentColor;padding-bottom:3px}
+.about-source a:hover{color:var(--ink)}
 /* Equal peer channels: matching identity, visual and action rows. */
 .connect-section{border-top:1px solid var(--line);padding-block:48px 12px}
 .connect-heading{margin-bottom:26px}
@@ -620,4 +636,10 @@ html{scroll-padding-top:20px}
 .artwork.brand-learn,.artwork.brand-history{gap:14px;padding:20px}
 .brand-learn .project-logo{width:85px;height:105px}
 .brand-history .project-logo{width:90px;height:90px}
+}
+@media(max-width:600px){
+.case-study{padding:24px 20px;margin:32px 0}
+.case-study .case-answer{font-size:16px}
+.case-outcome{grid-template-columns:1fr;gap:0}
+.case-outcome h3{margin-top:22px}
 }
