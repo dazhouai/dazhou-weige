@@ -49,6 +49,24 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .intro-strip>div{display:flex;gap:37px;align-items:center}
 .intro-strip b{font-size:22px;font-weight:500;letter-spacing:-.04em;color:var(--ink);margin-right:5px;font-variant-numeric:tabular-nums}
 .intro-strip .strip-note{border-left:1px solid var(--line);padding-left:36px;font-size:11px}
+.tool-feature{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;padding-block:66px;border-bottom:1px solid var(--line)}
+.tool-feature .eyebrow{margin-bottom:17px}
+.tool-feature h2{font-size:clamp(32px,3.4vw,48px);letter-spacing:-.045em;font-weight:600;line-height:1.25}
+.tool-feature h2 span{color:var(--blue)}
+.tool-feature-copy>p:not(.eyebrow){max-width:450px;margin:20px 0 25px;color:var(--muted);font-size:14px;line-height:1.9}
+.tool-feature-art{height:285px;background:var(--soft);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:17px;position:relative;padding:22px}
+.tool-feature-file{width:40%;max-width:178px;height:158px;background:white;border:1px solid #cfd5e5;padding:17px 16px;display:flex;flex-direction:column;gap:8px;transform:rotate(-4deg)}
+.tool-feature-file span{font-size:12px;color:var(--muted)}
+.tool-feature-file strong{font-size:38px;color:var(--ink);font-weight:600;line-height:1.15;letter-spacing:-.055em;font-variant-numeric:tabular-nums}
+.tool-feature-file small{font-size:15px;letter-spacing:0}
+.tool-feature-file i{display:block;height:3px;background:#dbe1ee;width:75%}
+.tool-feature-file i:last-child{width:51%}
+.tool-feature-file.is-output{border-color:var(--blue);transform:rotate(4deg)}
+.tool-feature-file.is-output strong{color:var(--blue)}
+.tool-feature-arrow svg{width:42px;height:20px;stroke:var(--blue);stroke-width:2;fill:none}
+.tool-feature-art>p{position:absolute;bottom:12px;right:18px;color:var(--muted);font-size:10px}
+@media(max-width:800px){.tool-feature{gap:30px;padding-block:45px}.tool-feature-art{height:235px}.tool-feature-file{height:140px;padding:13px}.tool-feature-file strong{font-size:29px}}
+@media(max-width:600px){.tool-feature{grid-template-columns:1fr;gap:26px;padding-block:42px}.tool-feature h2{font-size:35px}.tool-feature-copy>p:not(.eyebrow){font-size:13px;margin:16px 0 20px}.tool-feature-art{height:210px}.tool-feature-file{height:127px;max-width:160px}.tool-feature-file strong{font-size:28px}.tool-feature-art>p{font-size:9px}}
 .section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:32px}
 .section-heading .eyebrow,.updates-intro .eyebrow{margin-bottom:12px}
 .section-heading h2,.updates-intro h2{font-size:33px;font-weight:600;letter-spacing:-.04em}
