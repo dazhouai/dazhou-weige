@@ -1,3 +1,5 @@
+import { SIZE_CHOICES, PRESETS, outputSize, renderPlan } from './sizing.js';
+
 const MAX_BYTES = 25 * 1024 * 1024;
 const MAX_PIXELS = 36_000_000;
 const formats = {
@@ -14,6 +16,13 @@ const sourceName = document.querySelector('#source-name');
 const settings = document.querySelector('#settings');
 const format = document.querySelector('#format');
 const maxEdge = document.querySelector('#max-edge');
+const aspect = document.querySelector('#aspect-ratio');
+const customWidth = document.querySelector('#custom-width');
+const customHeight = document.querySelector('#custom-height');
+const fitMode = document.querySelector('#fit-mode');
+const cropPosition = document.querySelector('#crop-position');
+const sizeNote = document.querySelector('#output-size-note');
+const presetButtons = [...document.querySelectorAll('[data-size-preset]')];
 const quality = document.querySelector('#quality');
 const qualityValue = document.querySelector('#quality-value');
 const formatNote = document.querySelector('#format-note');
@@ -99,6 +108,61 @@ function updateFormatControls() {
       : '画质越低，通常文件越小。实际大小取决于图片内容。';
 }
 
+function sizeOptions() {
+  return { aspect: aspect.value, edge: Number(maxEdge.value), width: Number(customWidth.value), height: Number(customHeight.value) };
+}
+
+function populateSizes() {
+  if (!originalImage || aspect.value === 'custom') return;
+  const source = dimensions(originalImage);
+  const selected = maxEdge.value || '0';
+  maxEdge.replaceChildren(...SIZE_CHOICES.map(([edge, label]) => {
+    const size = outputSize(source.width, source.height, { aspect: aspect.value, edge });
+    const name = edge === 0 && aspect.value === 'original' ? '保持原尺寸' : label;
+    return new Option(`${name} · ${size.width} × ${size.height} 像素`, String(edge));
+  }));
+  maxEdge.value = selected;
+}
+
+function updateSizeControls() {
+  const custom = aspect.value === 'custom';
+  const changedRatio = aspect.value !== 'original';
+  document.querySelector('#standard-size-field').hidden = custom;
+  document.querySelector('#custom-size-fields').hidden = !custom;
+  document.querySelector('#fit-controls').hidden = !changedRatio;
+  document.querySelector('#crop-position-field').hidden = fitMode.value !== 'crop';
+  presetButtons.forEach(button => {
+    const preset = PRESETS[button.dataset.sizePreset];
+    button.setAttribute('aria-pressed', String(preset.aspect === aspect.value && preset.edge === Number(maxEdge.value)));
+  });
+  if (!originalImage) return;
+  const source = dimensions(originalImage);
+  const size = outputSize(source.width, source.height, sizeOptions());
+  const plan = renderPlan(source.width, source.height, size.width, size.height, changedRatio ? fitMode.value : 'contain', cropPosition.value);
+  const behavior = !changedRatio ? '保留完整原图' : fitMode.value === 'contain' ? '完整保留，白边补齐' : `裁剪保留${cropPosition.options[cropPosition.selectedIndex].textContent.split(' · ')[0]}`;
+  const ratio = changedRatio && !custom ? ` · ${aspect.value}` : '';
+  sizeNote.textContent = `导出 ${size.width} × ${size.height} 像素${ratio} · ${behavior}。${plan.upscaled ? '原图较小，会放大；清晰度不会增加。' : ''}`;
+  sizeNote.classList.toggle('is-upscale', plan.upscaled);
+  return { size, plan };
+}
+
+function queueProcessing(delay = 0) {
+  ++version;
+  releaseDownload();
+  clearTimeout(debounceTimer);
+  try { updateSizeControls(); }
+  catch (error) {
+    sizeNote.textContent = error.message;
+    sizeNote.classList.add('is-upscale');
+    document.querySelector('#after-size').textContent = '—';
+    document.querySelector('#after-dimensions').textContent = '—';
+    sizeChange.textContent = '';
+    return;
+  }
+  if (delay) debounceTimer = setTimeout(processImage, delay);
+  else processImage();
+}
+
 async function processImage() {
   if (!originalFile || !originalImage) return;
   const current = ++version;
@@ -109,21 +173,17 @@ async function processImage() {
   document.querySelector('#after-dimensions').textContent = '—';
   sizeChange.textContent = '';
   try {
-    const source = dimensions(originalImage);
-    const limit = Number(maxEdge.value);
-    const scale = limit > 0 ? Math.min(1, limit / Math.max(source.width, source.height)) : 1;
-    const width = Math.max(1, Math.round(source.width * scale));
-    const height = Math.max(1, Math.round(source.height * scale));
+    const { size: { width, height }, plan } = updateSizeControls();
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
     const context = canvas.getContext('2d');
     if (!context) throw new Error('浏览器无法处理这张图片，请尝试更小的图片。');
-    if (format.value === 'image/jpeg') {
+    if (format.value === 'image/jpeg' || (aspect.value !== 'original' && fitMode.value === 'contain')) {
       context.fillStyle = '#fff';
       context.fillRect(0, 0, width, height);
     }
-    context.drawImage(originalImage, 0, 0, width, height);
+    context.drawImage(originalImage, plan.sx, plan.sy, plan.sw, plan.sh, plan.dx, plan.dy, plan.dw, plan.dh);
     const blob = await canvasBlob(canvas, format.value, Number(quality.value) / 100);
     canvas.width = canvas.height = 0;
     if (current !== version) return;
@@ -165,6 +225,8 @@ async function setFile(file) {
   result.hidden = true;
   emptyResult.hidden = false;
   sourceName.hidden = true;
+  dropZone.classList.remove('has-image');
+  dropZone.querySelector('strong').textContent = '点击选择，或把图片拖到这里';
   showError(fileError, '');
   if (!file) return;
   const type = file.type || ({ jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' })[file.name.split('.').pop().toLowerCase()];
@@ -186,9 +248,18 @@ async function setFile(file) {
     originalImage = image;
     sourceName.textContent = `${file.name} · ${formatSize(file.size)}`;
     sourceName.hidden = false;
+    dropZone.classList.add('has-image');
+    dropZone.querySelector('strong').textContent = '点击更换，或拖入另一张图片';
     format.value = type === 'image/png' ? 'image/webp' : type;
+    aspect.value = 'original';
     maxEdge.value = '0';
+    customWidth.value = String(width);
+    customHeight.value = String(height);
+    fitMode.value = 'crop';
+    cropPosition.value = 'center';
     quality.value = '82';
+    populateSizes();
+    updateSizeControls();
     updateFormatControls();
     drawPreview(beforePreview, image);
     document.querySelector('#before-size').textContent = formatSize(file.size);
@@ -214,13 +285,29 @@ for (const eventName of ['dragleave', 'drop']) dropZone.addEventListener(eventNa
   dropZone.classList.remove('is-dragover');
 });
 dropZone.addEventListener('drop', event => setFile(event.dataTransfer?.files?.[0]));
-format.addEventListener('change', () => { updateFormatControls(); processImage(); });
-maxEdge.addEventListener('change', processImage);
+format.addEventListener('change', () => { updateFormatControls(); queueProcessing(); });
+aspect.addEventListener('change', () => { populateSizes(); queueProcessing(); });
+maxEdge.addEventListener('change', () => queueProcessing());
+fitMode.addEventListener('change', () => queueProcessing());
+cropPosition.addEventListener('change', () => queueProcessing());
+for (const control of [customWidth, customHeight]) control.addEventListener('input', () => queueProcessing(250));
+presetButtons.forEach(button => button.addEventListener('click', () => {
+  const preset = PRESETS[button.dataset.sizePreset];
+  aspect.value = preset.aspect;
+  maxEdge.value = String(preset.edge);
+  fitMode.value = 'crop';
+  cropPosition.value = 'center';
+  populateSizes();
+  queueProcessing();
+}));
 quality.addEventListener('input', () => {
   qualityValue.textContent = `${quality.value}%`;
-  ++version;
-  releaseDownload();
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(processImage, 200);
+  queueProcessing(200);
 });
-window.addEventListener('pagehide', () => { releaseDownload(); closeImage(originalImage); });
+window.addEventListener('pagehide', event => {
+  if (event.persisted) return;
+  ++version;
+  clearTimeout(debounceTimer);
+  releaseDownload();
+  closeImage(originalImage);
+});
